@@ -1,0 +1,54 @@
+<form id="custom_search" method="get" action="<%= @node.public_uri %><%= @db.id %>/search">
+<table class="show">
+<% @items.each do |item| %>
+  <div class="criteria_<%=item.name%>">
+    <fieldset>
+      <legend><%=item.title%></legend>
+      <ul>
+      <%- case item.item_type -%>
+      <%- when 'select' -%>
+        <li>
+        <%= select_tag "criteria[#{item.name}]",
+                       options_for_select(item.item_options_for_select, nil),
+                       style: item.style_attribute,
+                       include_blank: true %>
+        </li>
+      <%- when 'radio_button' -%>
+        <%- item.item_options_for_select.each do |option| -%>
+          <li>
+            <label><%= radio_button_tag "criteria[#{item.name}]", option, nil, style: item.style_attribute %> <%= option %></label>
+          </li>
+        <%- end -%>
+      <%- when 'select_data' -%>
+        <%= select_tag "criteria[#{item.name}]",
+                       options_for_select(item.item_options_for_select_data, nil),
+                       style: item.style_attribute,
+                       include_blank: true %>
+      <%- when 'radio_data' -%>
+        <%- item.item_options_for_select_data.each do |option| -%>
+          <label><%= radio_button_tag "criteria[#{item.name}]", option[1], nil, style: item.style_attribute %> <%= option[0] %></label>
+        <%- end -%>
+      <%- when 'ampm' -%>
+        <%- Webdb::Entry::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
+          <li>
+          <%= w %>
+          <label><%= check_box_tag "criteria[#{item.name}][am][#{i}]", true,
+            false %>午前</label>
+          <label>
+          <%= check_box_tag "criteria[#{item.name}][pm][#{i}]", true,
+            false %>午後</label>
+          </li>
+        <%- } -%>
+      <%- else -%>
+        <%= text_field_tag item.name, '' %>
+      <%end%>
+      </ul>
+    </fieldset>
+  </div>
+<% end %>
+</table>
+  <div class="submitters">
+    <input type="submit" value="検索" />
+  </div>
+
+</form>

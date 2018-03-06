@@ -1,0 +1,172 @@
+<%- return '' unless defined?(db) && defined?(item_values) -%>
+<table class="show">
+<%- db.items.public_state.each do |item| -%>
+  <%- if item.item_type == 'rich_text' -%>
+    <tr>
+      <th colspan="2"><%= item.title %></th>
+    </tr>
+    <tr>
+      <td colspan="2" class="cke_editor_wrapper">
+        <%= text_area_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute, class: 'body' %>
+        <%= javascript_tag do %>
+          CKEDITOR.replace('item_item_values_<%= item.name %>');
+        <%- end -%>
+      </td>
+    </tr>
+  <%- else -%>
+    <tr>
+      <th><%= item.title %></th>
+      <td>
+        <%- case item.item_type -%>
+        <%- when 'text_field' -%>
+          <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute %>
+        <%- when 'text_area' -%>
+          <%= text_area_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute, class: 'body' %>
+        <%- when 'select' -%>
+          <%= select_tag "item[item_values][#{item.name}]",
+                         options_for_select(item.item_options_for_select, item_values[item.name]), style: item.style_attribute,
+                         include_blank: true %>
+         <%- when 'select_data' -%>
+          <%= select_tag "item[item_values][#{item.name}]",
+                         options_for_select(item.item_options_for_select_data, item_values[item.name]), style: item.style_attribute,
+                         include_blank: true %>
+        <%- when 'check_box' -%>
+          <%- item.item_options_for_select.each_with_index{|w, i| -%>
+            <label><%= check_box_tag "item[item_values][#{item.name}][check][]", w,
+              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w).present? : false %><%= w %></label>
+          <%- } -%>
+         <%- when 'check_data' -%>
+          <%- item.item_options_for_select_data.each_with_index{|w, i| -%>
+            <label><%= check_box_tag "item[item_values][#{item.name}][check][]", w[1],
+              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w[1].to_s).present? : false %><%= w[0] %></label>
+          <%- } -%>
+         <%- when 'radio_button' -%>
+          <%- item.item_options_for_select.each do |option| -%>
+            <label><%= radio_button_tag "item[item_values][#{item.name}]", option,
+                                        option == item_values[item.name], style: item.style_attribute %> <%= option %></label>
+          <%- end -%>
+        <%- when 'attachment_file' -%>
+          <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute %>
+        <%- when 'postal_code' -%>
+          <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute %>
+        <%- when 'ampm' -%>
+        <div><span>午前</span>
+          <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
+            <label><%= check_box_tag "item[item_values][#{item.name}][am][#{i}]", true,
+              item_values.dig(item.name, 'am') ? item_values[item.name]['am'][i.to_s] : false %><%= w %></label>
+          <%- } -%>
+        </div>
+        <div><span>午後</span>
+          <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
+            <label>
+            <%= check_box_tag "item[item_values][#{item.name}][pm][#{i}]", '○',
+              item_values.dig(item.name, 'pm') ? item_values[item.name]['pm'][i.to_s] : false %><%= w %></label>
+          <%- } -%>
+        </div>
+        <%- when 'office_hours' -%>
+          <div>営業時間</div>
+          <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
+            <div>
+            <label><%= w %></label>
+            <%= text_field_tag "item[item_values][#{item.name}][open][#{i}]",
+              item_values.dig(item.name, 'open') ? item_values[item.name]['open'][i.to_s] : nil %>～
+              <%= text_field_tag "item[item_values][#{item.name}][close][#{i}]",
+              item_values.dig(item.name, 'close') ? item_values[item.name]['close'][i.to_s] : nil %>
+            </div>
+          <%- } -%>
+          <div>
+          <div>備考</div>
+            <%= text_area_tag "item[item_values][#{item.name}][remark]",
+                item_values[item.name] ? item_values[item.name]['remark'] : nil  %>
+          </div>
+        <%- when 'blank_integer' -%>
+          <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute, class: 'number' %>
+        <%- when 'blank_weekday' -%>
+          <%- I18n.t('date.abbr_day_names').each_with_index{|w, i| -%>
+            <%= w %>
+              <%= select_tag "item[item_values][#{item.name}][weekday][#{i}]",
+                             options_for_select(item.item_options_for_select,
+                             item_values.dig(item.name, 'weekday') ? item_values[item.name]['weekday'][i.to_s] : nil),
+                             style: item.style_attribute,
+                             include_blank: true %>
+          <%- } -%>
+
+        <%- when 'blank_date' -%>
+          <div class="fieldDatetime">
+            <div id="eventField<%= item.id %>">
+            <% if @item.dates.present?
+               @item.dates.where(name: item.name).each_with_index do |event, i| %>
+               <div class="dateForm">
+                <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , event.event_date.try(:strftime, '%Y-%m-%d'), class: 'datepicker'%>
+                <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
+                               options_for_select(item.item_options_for_select, event.option_value), style: item.style_attribute,
+                               include_blank: true %>
+              <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'%>
+                </div>
+                <% @date_idx += 1
+                end
+              else %>
+              <div class="dateForm" style="word-spacing: -1em;">
+              <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , nil, class: 'datepicker' -%>
+              <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
+                             options_for_select(item.item_options_for_select, nil),
+                             include_blank: true, class: 'selectMark' %>
+              <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'%>
+              </div>
+              <% end %>
+            </div>
+            <a href="#" class="addEvent" id="event<%= item.id %>">日程を追加する</a>
+          </div>
+        <%- @date_idx += 1
+          end -%>
+      </td>
+    </tr>
+  <%- end -%>
+<%- end -%>
+</table>
+<%= javascript_tag do %>
+$(function() {
+
+  $('input.datepicker').datepicker();
+
+  $('.addEvent').click(function(e) {
+
+    var eventNumber = $(this).attr('id').replace(/event/, '');
+    var idx = $(".dateForm").length;
+    idx++;
+    var formDiv = $("<div></div>", {class: "dateForm"});
+
+    $('<input>').attr({
+        type: 'text',
+        name: 'item[in_target_dates][' + idx + '][event_date]',
+        id: 'item_in_target_dates_' + idx + '_event_date',
+        class: "datepicker"
+    }).appendTo(formDiv);
+
+    $('<select>').attr({
+        type: 'text',
+        name: 'item[in_target_dates][' + idx + '][option_value]',
+        id: 'item_in_target_dates_' + idx + '_option_value',
+        class: 'selectMark'
+    }).appendTo(formDiv);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'item[in_target_dates][' + idx + '][name]',
+        id: 'item_in_target_dates_' + idx + '_name',
+        class: "datepicker"
+    }).appendTo(formDiv);
+
+    $("#eventField" + eventNumber ).append(formDiv);
+    var $options = $("#eventField" + eventNumber +" div.dateForm select:first > option").clone();
+    $('#item_in_target_dates_' + idx + '_option_value').append($options);
+
+    var name = $("#eventField" + eventNumber +" div.dateForm input.selectName:first").val();
+    $('#item_in_target_dates_' + idx + '_name').val(name);
+
+
+    $('#item_in_target_dates_' + idx + '_event_date').datepicker({ dateFormat: 'yy-mm-dd' });
+    return false;
+  });
+});
+<% end %>

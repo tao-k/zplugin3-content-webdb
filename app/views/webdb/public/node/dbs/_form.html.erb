@@ -1,0 +1,5 @@
+<%= init_ckeditor baseHref: @item.edit_uri %>
+<span class="note">※は必須項目です。</span>
+
+<%= render 'webdb/admin/shared/form', db: @item.db, item_values: @item.item_values if @item.db %>
+
