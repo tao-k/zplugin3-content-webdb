@@ -13,7 +13,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     if params[:csv]
       return export_csv(@items)
     else
-      @items = @items.paginate(page: params[:page], per_page: 30)
+      @items = @items.paginate(page: params[:page], per_page: 30).order(updated_at: :desc)
     end
     _index @items
   end

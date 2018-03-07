@@ -1,6 +1,6 @@
 <table class="index">
   <tr>
-    <th style="width: auto;"><%= Cms::Content.new.locale(:name) %></th>
+    <th style="width: auto;"><%= Cms::Content.human_attribute_name :name %></th>
     <th style="width: auto;"><%= Cms::Content.human_attribute_name :note %></th>
   </tr>
   <%- @items.each do |item| -%>
