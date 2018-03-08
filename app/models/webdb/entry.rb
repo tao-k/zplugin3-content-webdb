@@ -37,10 +37,12 @@ class Webdb::Entry < ApplicationRecord
   end
 
   def public_uri
+    return nil if content.public_node.blank?
     "#{content.public_node.public_uri}#{self.db_id}/entry/#{name}/"
   end
 
   def edit_uri
+    return nil if content.public_node.blank?
     "#{content.public_node.public_uri}#{self.db_id}/edit/#{name}/"
   end
 
