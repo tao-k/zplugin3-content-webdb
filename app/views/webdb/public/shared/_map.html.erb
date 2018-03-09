@@ -1,4 +1,4 @@
-<fieldset>
+ <fieldset>
   <legend>地図で探す</legend>
   <div class="keyword">
     <label for="keyword">住所を入力するとその付近の施設を検索します</label>
@@ -17,32 +17,8 @@
     });
 
     function initMap(){
-      <%- unless all_markers.empty?
-            bounds = all_markers.inject(min: {}, max: {}){|result, marker|
-                       min = result[:min]
-                       max = result[:max]
-                       m_lat = marker.latitude.to_f
-                       m_lon = marker.longitude.to_f
-
-                       min[:lat] ||= m_lat
-                       min[:lon] ||= m_lon
-                       max[:lat] ||= m_lat
-                       max[:lon] ||= m_lon
-
-                       min[:lat] = m_lat if min[:lat] > m_lat
-                       min[:lon] = m_lon if min[:lon] > m_lon
-                       max[:lat] = m_lat if max[:lat] < m_lat
-                       max[:lon] = m_lon if max[:lon] < m_lon
-
-                       result
-                     } -%>
-      map = new MapViewer('map_canvas', <%= bounds[:min][:lat] %>, <%= bounds[:min][:lon] %>,
-                                         <%= bounds[:max][:lat] %>, <%= bounds[:max][:lon] %>);
-      nearbyLocation = new google.maps.LatLng( <%= bounds[:min][:lat] %>, <%= bounds[:min][:lon] %> );
-      <%- else -%>
       map = new MapViewer('map_canvas', <%= content.default_map_position.first %>, <%= content.default_map_position.last %>);
       nearbyLocation = new google.maps.LatLng( <%= content.default_map_position.first %>, <%= content.default_map_position.last %> );
-      <%- end -%>
 
       <%- all_markers.each do |marker| -%>
         map.set_marker('<%= "#{marker.latitude}_#{marker.longitude}" %>', <%= marker.latitude %>, <%= marker.longitude %>, '<%= marker.title %>',
