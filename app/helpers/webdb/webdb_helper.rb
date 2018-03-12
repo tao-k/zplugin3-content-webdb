@@ -62,4 +62,13 @@ module Webdb::WebdbHelper
   def render_map(item)
     render 'cms/public/_partial/maps/view', item: item
   end
+
+  def map_icon(icon_id, db)
+    icon_column = db.items.icon_items.first
+    return nil if icon_column.blank? || icon_column.icon_item.try(:name).blank?
+    icon = Webdb::Entry.find_by(id: icon_id)
+    return nil if icon.blank? || icon.item_values.blank?
+    return icon.item_values[icon_column.icon_item.try(:name)]
+  end
+
 end

@@ -20,11 +20,14 @@
       map = new MapViewer('map_canvas', <%= content.default_map_position.first %>, <%= content.default_map_position.last %>);
       nearbyLocation = new google.maps.LatLng( <%= content.default_map_position.first %>, <%= content.default_map_position.last %> );
 
-      <%- all_markers.each do |marker| -%>
+      <%- markers.each do |item|
+        next unless map_markers = item.map_marker
+        map_icon = item.map_icon
+        map_markers.each do |marker| -%>
         map.set_marker('<%= "#{marker.latitude}_#{marker.longitude}" %>', <%= marker.latitude %>, <%= marker.longitude %>, '<%= marker.title %>',
                        '<%=raw simple_format(marker.window_text, {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>',
-                       null );
-
+                       '<%= map_icon %>' );
+        <%- end -%>
       <%- end -%>
     }
 

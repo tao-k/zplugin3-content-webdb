@@ -21,6 +21,7 @@ class Webdb::Item < ApplicationRecord
 
   belongs_to :reference_db, foreign_key: :reference_id, class_name: 'Webdb::Db'
   belongs_to :reference_item, foreign_key: :reference_item_id, class_name: 'Webdb::Item'
+  belongs_to :icon_item, foreign_key: :icon_item_id, class_name: 'Webdb::Item'
 
   delegate :content, to: :db
 
@@ -51,6 +52,10 @@ class Webdb::Item < ApplicationRecord
     public_state.where(is_target_sort: true)
   }
 
+  scope :icon_items, ->{
+    where(arel_table[:icon_item_id].not_eq(nil))
+  }
+
   def state_public?
     state == 'public'
   end
@@ -62,6 +67,11 @@ class Webdb::Item < ApplicationRecord
   def item_options_for_select_data
     return [] if reference_db.blank? || reference_item.blank?
     reference_db.entries.public_state.map{|e| [e.item_values[reference_item.name], e.id] }
+  end
+
+  def item_options_for_icons
+    return [] if reference_db.blank? || icon_item.blank?
+    reference_db.entries.public_state.map{|e| [e.item_values[icon_item.name], e.id] }
   end
 
   def item_options_for_select

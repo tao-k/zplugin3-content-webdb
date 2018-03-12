@@ -38,6 +38,17 @@
    </td>
   </tr>
   <tr>
+    <th><%= f.label :icon_item_id %><br />（種別がデータベース参照選択の時に使用）</th>
+    <td>
+      <% if @item.reference_db%>
+      <%= select_tag 'item[icon_item_id]',
+                       options_from_collection_for_select(@item.reference_db.items, :id, :title, @item.icon_item_id), include_blank: true %>
+      <% else%>
+      <%= f.select :icon_item_id, [] %>
+      <%end%>
+   </td>
+  </tr>
+  <tr>
     <th><%= f.label :style_attribute %><br />（style=）</th>
     <td><%= f.text_field :style_attribute, :style => 'width: 600px;' %></td>
   </tr>
@@ -81,8 +92,10 @@ $(document).ready(function() {
       $('#item_reference_item_id').html('<option value="">更新中...</option>');
       $.get('<%= webdb_dbs_path(content: @content) %>/' + db_id + '/items.json', function(data) {
         $('#item_reference_item_id').children().remove();
+        $('#item_icon_item_id').children().remove();
         $.each(data, function(i, e) {
           $('#item_reference_item_id').append($("<option>").val(data[i].id).text(data[i].title));
+          $('#item_icon_item_id').append($("<option>").val(data[i].id).text(data[i].title));
         });
       });
     }

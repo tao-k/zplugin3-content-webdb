@@ -60,14 +60,36 @@ class Webdb::Entry < ApplicationRecord
     Login::User.find_by(id: editor_id)
   end
 
-  def map_marker
+  def map_icon
+    return nil if item_values.blank?
+    icon_column = db.items.icon_items.first
+    return nil if icon_column.blank?
+    if select_data = icon_column.item_options_for_icons
+      value = case icon_column.item_type
+      when 'check_data'
+        if item_values.dig(icon_column.name, 'check').present?
+          item_values[icon_column.name]['check'][0]
+        else
+          return nil
+        end
+      else
+        item_values[icon_column.name]
+      end
+      icon = Webdb::Entry.find_by(id: value)
+      return nil if icon.blank? || icon.item_values.blank?
+      return icon.item_values[icon_column.icon_item.try(:name)]
+    end
+    return nil
+  end
 
+  def map_marker
+    marker_title = item_values.present? && db.items.present? ? item_values[db.items.first.try(:name)] : title
     self.maps.first.markers.map do |m|
       marker = Map::Marker.new(
-        title: self.title,
+        title: marker_title,
         latitude: m.lat,
         longitude: m.lng,
-        window_text: %Q(<p>#{self.title}</p><p><a href="#{self.public_uri}">詳細</a></p>),
+        window_text: %Q(<p>#{marker_title}</p><p><a href="#{self.public_uri}">詳細</a></p>),
         created_at: self.created_at,
         updated_at: self.updated_at
       )
@@ -100,7 +122,7 @@ class Webdb::Entry < ApplicationRecord
           item_values[item.name]['check'].each{|w|
             item.item_options_for_select_data.each{|a| checks << a[0] if a[1] == w.to_i}
           }
-          item_values[item.name]['text'] = checks.join('／')
+          item_values[item.name]['text'] = checks.join('，')
         end
       when 'ampm'
         if item_values[item.name]

@@ -27,11 +27,6 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
   def map
     result
     @markers = @items.joins(maps: :markers)
-    markers = []
-    @markers.each do |entry|
-      markers << entry.map_marker
-    end
-    @all_markers = markers.flatten
   end
 
   def address

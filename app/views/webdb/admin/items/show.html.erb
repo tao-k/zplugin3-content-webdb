@@ -28,6 +28,10 @@
     <td><%= @item.reference_item.try(:title) %></td>
   </tr>
   <tr>
+    <th><%= @item.class.human_attribute_name :icon_item_id %><br />（種別がデータベース参照選択の時に使用）</th>
+    <td><%= @item.icon_item.try(:title) %></td>
+  </tr>
+  <tr>
     <th><%= @item.class.human_attribute_name :style_attribute %><br />（style=）</th>
     <td><%= @item.style_attribute %></td>
   </tr>

@@ -46,7 +46,7 @@ class Webdb::Admin::ItemsController < Cms::Controller::Admin::Base
   def item_params
     params.require(:item).permit(:item_options, :item_type, :name, :sort_no,
       :state, :style_attribute, :title, :is_target_sort, :is_target_search,
-      :is_target_keyword, :is_limited_access, :reference_id, :reference_item_id,
+      :is_target_keyword, :is_limited_access, :reference_id, :reference_item_id, :icon_item_id,
       :creator_attributes => [:id, :group_id, :user_id])
   end
 end

@@ -38,6 +38,7 @@ ja:
         enabled_resrict: 会員のみ閲覧可
         reference_id: 参照データベース
         reference_item_id: 項目
+        icon_item_id: マップアイコン
       webdb/entry:
         title: 名称
         item_value: データ
@@ -48,4 +49,3 @@ ja:
         target_db_id: 対象データベース
       webdb/piece/map:
         target_db_id: 対象データベース
-        
