@@ -7,7 +7,7 @@
     </tr>
     <tr>
       <td colspan="2" class="cke_editor_wrapper">
-        <%= text_area_tag "item_values[#{item.name}]", item_values[item.name].to_s.gsub(/("|')file_contents\//, '\1' + file_uri), class: 'ckeditor' %>
+        <%= text_area_tag "item_values[#{item.name}]", item_values[item.name].to_s.gsub(/file_contents\//, "#{@item.id}/file_contents/"), class: 'ckeditor' %>
       </td>
     </tr>
   </table>
@@ -15,7 +15,7 @@
     <tr>
       <th><%= item.title %></th>
       <td>
-        <%= simple_format entry_item_value(item, @item, files).gsub(/file_contents\//, "#{@item.id}/file_contents/") %>
+        <%= entry_item_value(item, @item, files) %>
       </td>
     </tr>
   <%- end -%>

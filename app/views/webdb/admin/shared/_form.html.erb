@@ -96,12 +96,13 @@
             <div id="eventField<%= item.id %>">
             <% if @item.dates.present?
                @item.dates.where(name: item.name).each_with_index do |event, i| %>
-               <div class="dateForm">
-                <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , event.event_date.try(:strftime, '%Y-%m-%d'), class: 'datepicker'%>
+               <div class="dateForm" style="word-spacing: -1em;">
+                <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , event.event_date.try(:strftime, '%Y-%m-%d'), class: 'datepicker'-%>
                 <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
                                options_for_select(item.item_options_for_select, event.option_value), style: item.style_attribute,
-                               include_blank: true %>
-              <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'%>
+                               include_blank: true -%>
+                <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'-%>
+                <%= link_to "×", "#", class: "removeDate" if i != 0 -%>
                 </div>
                 <% @date_idx += 1
                 end
@@ -110,8 +111,8 @@
               <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , nil, class: 'datepicker' -%>
               <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
                              options_for_select(item.item_options_for_select, nil),
-                             include_blank: true, class: 'selectMark' %>
-              <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'%>
+                             include_blank: true, class: 'selectMark' -%>
+              <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'-%>
               </div>
               <% end %>
             </div>
@@ -128,6 +129,13 @@
 $(function() {
 
   $('input.datepicker').datepicker();
+
+
+  $(document.body).on('click', '.removeDate',  function(e) {
+    console.log("remove");
+    $(this).parent().remove();
+    return false;
+  });
 
   $('.addEvent').click(function(e) {
 
@@ -157,13 +165,17 @@ $(function() {
         class: "datepicker"
     }).appendTo(formDiv);
 
+    $('<a>').attr({
+        class: "removeDate",
+        href: "#"
+    }).html("×").appendTo(formDiv);
+
     $("#eventField" + eventNumber ).append(formDiv);
     var $options = $("#eventField" + eventNumber +" div.dateForm select:first > option").clone();
     $('#item_in_target_dates_' + idx + '_option_value').append($options);
 
     var name = $("#eventField" + eventNumber +" div.dateForm input.selectName:first").val();
     $('#item_in_target_dates_' + idx + '_name').val(name);
-
 
     $('#item_in_target_dates_' + idx + '_event_date').datepicker({ dateFormat: 'yy-mm-dd' });
     return false;

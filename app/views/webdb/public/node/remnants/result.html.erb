@@ -7,18 +7,14 @@
         param.each do |p|-%>
           <%= hidden_field_tag "criteria[#{item.name}][]", p%>
         <%- end
-      when 'ampm', 'blank_weekday', 'office_hours'
+      when 'ampm'
         param.each do |key, p|
           p.each do |c_key, c|-%>
-          <%= hidden_field_tag "criteria[#{item.name}][#{key}][#{c_key}]", c%>
+          <%= hidden_field_tag "criteria[#{item.name}][#{key}][#{c_key}]", params.dig(:criteria, key, c_key)%>
           <%- end -%>
         <%- end
-      when 'blank_date'
-        param.each do |key, p| -%>
-          <%= hidden_field_tag "criteria[#{item.name}][#{key}]", p%>
-        <%- end
       else -%>
-        <%= hidden_field_tag "criteria[#{item.name}]", params.dig(:criteria, item.name)%>
+      <%= hidden_field_tag "criteria[#{item.name}]", params.dig(:criteria, item.name)%>
     <%- end -%>
   <%- end -%>
   <%= hidden_field_tag "keyword", params[:keyword]%>

@@ -56,6 +56,11 @@ class Webdb::Item < ApplicationRecord
     where(arel_table[:icon_item_id].not_eq(nil))
   }
 
+  scope :item_type_is, ->(type){
+    where(item_type: type)
+  }
+
+
   def state_public?
     state == 'public'
   end

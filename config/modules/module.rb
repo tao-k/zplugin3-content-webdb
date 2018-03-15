@@ -4,6 +4,7 @@ Cms::Lib::Modules::ModuleSet.draw :webdb, '検索DB', 999 do |mod|
 
 #  ## directories
   mod.directory :dbs, 'データベース検索'
+  mod.directory :remnants, '空き枠検索'
 
   ## pieces
   mod.piece :forms, '項目検索フォーム'

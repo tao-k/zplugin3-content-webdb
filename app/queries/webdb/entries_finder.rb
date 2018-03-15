@@ -24,6 +24,36 @@ class Webdb::EntriesFinder < ApplicationFinder
         elsif pm_idx.present?
           @entries = @entries.where("item_values -> '#{item.name}' -> 'pm' ?| array[:keys]", keys: pm_idx)
         end
+      when 'blank_weekday'
+        if value['weekday']
+          qs = []
+          day_values = {}
+          7.times do |i|
+            val = value['weekday'][i.to_s]
+            next if val.blank?
+            qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{i})"
+            day_values["day_value#{i}".to_sym] = {i.to_s => val}.to_json
+          end
+          @entries = @entries.where(qs.join(' OR '), day_values)
+        end
+      when 'blank_integer'
+        @entries = @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
+        @entries = @entries.where("item_values ->> '#{item.name}' != ''")
+        @entries = @entries.where("(item_values ->> '#{item.name}')::int >= :value", value: value.to_i)
+      when 'blank_date'
+        next if value[:date].blank? || value[:option].blank?
+        if date = Date.parse(value[:date]) rescue nil
+          @entries = @entries.joins(:dates)
+            .where(date_arel_table[:event_date].eq(date))
+            .where(date_arel_table[:option_value].eq(value[:option]))
+        end
+      when 'office_hours'
+        open_idx = value['open'].present? ? value['open'].keys : []
+        if open_idx.present?
+          @entries = @entries.where(
+            "(item_values -> '#{item.name}' -> 'am' ?| array[:open_keys])",
+            open_keys: open_idx)
+        end
       else
         if value.kind_of?(Array)
           @entries = @entries.where("item_values ->> '#{item.name}' IN(:keys)", keys: value)
@@ -51,8 +81,12 @@ class Webdb::EntriesFinder < ApplicationFinder
 
   private
 
+  def date_arel_table
+    Webdb::EntryDate.arel_table
+  end
+
   def arel_table
-    @entries.arel_table
+    Webdb::Entry.arel_table
   end
 
   def ordering(order)

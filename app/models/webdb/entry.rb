@@ -67,15 +67,11 @@ class Webdb::Entry < ApplicationRecord
     if select_data = icon_column.item_options_for_icons
       value = case icon_column.item_type
       when 'check_data'
-        if item_values.dig(icon_column.name, 'check').present?
-          item_values[icon_column.name]['check'][0]
-        else
-          return nil
-        end
+        item_values.dig(icon_column.name, 'check')
       else
         item_values[icon_column.name]
       end
-      icon = Webdb::Entry.find_by(id: value)
+      icon = Webdb::Entry.where(id: value).first
       return nil if icon.blank? || icon.item_values.blank?
       return icon.item_values[icon_column.icon_item.try(:name)]
     end

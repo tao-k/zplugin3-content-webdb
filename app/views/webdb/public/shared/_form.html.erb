@@ -1,7 +1,13 @@
+<link rel="stylesheet" media="screen" href="/_common/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
+<script src="/_common/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" media="screen" href="/_common/css/jquery-ui-timepicker-addon.css" />
+<script src="/_common/js/jquery-ui-timepicker-addon.js"></script>
+<%= javascript_include_tag '/_common/js/jquery-ui-datepicker-ja.js' %>
+<%= javascript_include_tag '/_common/js/jquery-ui-timepicker-addon-ja.js' %>
 <%= form_tag url, method: :get, class: 'search' do |f| %>
   <%= hidden_field_tag 'sort', db.items.target_sort_state.first.try(:name) %>
   <legend>項目で探す</legend>
-  <table class="show">
+  <%- if defined?(use_keyword) -%>
   <div class="search_keyword">
     <fieldset>
       <legend>キーワード</legend>
@@ -9,6 +15,7 @@
         <li><%= text_field_tag "keyword", '' %></li>
       </ul>
   </div>
+  <%- end -%>
   <% items.each do |item| %>
     <div class="criteria_<%=item.name%>">
       <fieldset>
@@ -65,6 +72,24 @@
               false %>午後</label>
             </li>
           <%- } -%>
+        <%- when 'blank_integer' -%>
+          <li><%= number_field_tag "criteria[#{item.name}]", '', style: 'ime-mode: disabled;' %></li>
+        <%- when 'blank_date' -%>
+          <li>
+            <%= text_field_tag "criteria[#{item.name}][date]", '', class: 'datepicker' %>
+            <%= select_tag "criteria[#{item.name}][option]",
+                           options_for_select(item.item_options_for_select, nil),
+                           style: item.style_attribute,
+                           include_blank: true %>
+          </li>
+        <%- when 'blank_weekday' -%>
+          <%- I18n.t('date.abbr_day_names').each_with_index{|w, i| -%>
+            <li><%= w %>
+              <%= select_tag "criteria[#{item.name}][weekday][#{i}]",
+                             options_for_select(item.item_options_for_select,nil),
+                             style: item.style_attribute,
+                             include_blank: true %></li>
+          <%- } -%>
         <%- else -%>
           <li><%= text_field_tag "criteria[#{item.name}]", '' %></li>
         <%end%>
@@ -72,8 +97,15 @@
       </fieldset>
     </div>
   <% end %>
-  </table>
   <div class="submitters">
     <input type="submit" value="検索" />
   </div>
 <%- end -%>
+<%= javascript_tag do %>
+$(function() {
+
+  $('input.datepicker').datepicker();
+
+});
+<%- end -%>
+
