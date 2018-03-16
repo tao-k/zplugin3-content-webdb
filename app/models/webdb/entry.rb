@@ -115,7 +115,7 @@ class Webdb::Entry < ApplicationRecord
       case item.item_type
       when 'check_box'
         if item_values[item.name]
-          item_values[item.name]['text'] = item_values.dig(item.name, 'check').present? ? item_values[item.name]['check'].join('／') : nil
+          item_values[item.name]['text'] = item_values.dig(item.name, 'check').present? ? item_values[item.name]['check'].join('，') : nil
         end
       when 'check_data'
         if item_values.dig(item.name, 'check').present?

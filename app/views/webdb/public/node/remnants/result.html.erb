@@ -1,3 +1,4 @@
+<div class="contentWebdb">
 <form id="custom_search" method="get">
   <%- @db.items.each do |item|
     param = params.dig(:criteria, item.name)
@@ -27,3 +28,4 @@
 <% end %>
 
 <%= paginate @items -%>
+</div>
