@@ -46,6 +46,11 @@ class Webdb::Entry < ApplicationRecord
     "#{content.public_node.public_uri}#{self.db_id}/edit/#{name}/"
   end
 
+  def delete_event_uri
+    return nil if content.public_node.blank?
+    "#{content.public_node.public_uri}#{self.db_id}/delete_event/#{name}/"
+  end
+
   def preview_uri(terminal: nil, params: {})
     return if (path = public_uri).blank?
 

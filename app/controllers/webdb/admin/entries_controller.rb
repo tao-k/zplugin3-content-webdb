@@ -65,6 +65,17 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     end
   end
 
+  def delete_event
+    @item = @db.entries.find(params[:id])
+    @event = @item.dates.find_by(id: params[:event_id])
+    return http_error(404) unless @event
+    if @event.destroy
+      render plain: "OK"
+    else
+      render plain: "NG"
+    end
+  end
+
   private
 
   def set_target_date_idx

@@ -93,6 +93,7 @@ $(document).ready(function() {
       $.get('<%= webdb_dbs_path(content: @content) %>/' + db_id + '/items.json', function(data) {
         $('#item_reference_item_id').children().remove();
         $('#item_icon_item_id').children().remove();
+        $('#item_icon_item_id').append($("<option>").val("").text(""));
         $.each(data, function(i, e) {
           $('#item_reference_item_id').append($("<option>").val(data[i].id).text(data[i].title));
           $('#item_icon_item_id').append($("<option>").val(data[i].id).text(data[i].title));

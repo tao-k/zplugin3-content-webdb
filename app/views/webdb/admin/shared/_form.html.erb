@@ -41,10 +41,15 @@
               item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w[1].to_s).present? : false %><%= w[0] %></label>
           <%- } -%>
          <%- when 'radio_button' -%>
-          <%- item.item_options_for_select.each do |option| -%>
+          <%- item.item_options_for_select.each{|option| -%>
             <label><%= radio_button_tag "item[item_values][#{item.name}]", option,
                                         option == item_values[item.name], style: item.style_attribute %> <%= option %></label>
-          <%- end -%>
+          <%- } -%>
+        <%- when 'radio_data' -%>
+          <%- item.item_options_for_select_data.each_with_index{|w, i| -%>
+            <label><%= radio_button_tag "item[item_values][#{item.name}]", w[1],
+                                        w[1] == item_values[item.name].to_i, style: item.style_attribute %> <%= w[0] %></label>
+          <%- } -%>
         <%- when 'attachment_file' -%>
           <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute %>
         <%- when 'postal_code' -%>
@@ -96,25 +101,21 @@
             <div id="eventField<%= item.id %>">
             <% if @item.dates.present?
                @item.dates.where(name: item.name).each_with_index do |event, i| %>
-               <div class="dateForm" style="word-spacing: -1em;">
-                <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , event.event_date.try(:strftime, '%Y-%m-%d'), class: 'datepicker'-%>
-                <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
-                               options_for_select(item.item_options_for_select, event.option_value), style: item.style_attribute,
-                               include_blank: true -%>
-                <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'-%>
-                <%= link_to "×", "#", class: "removeDate" if i != 0 -%>
-                </div>
-                <% @date_idx += 1
-                end
-              else %>
+               <div class="dateList" style="word-spacing: -1em;">
+                 <span><%= event.event_date.try(:strftime, '%Y-%m-%d') %></span>
+                 <span><%= event.option_value %></span>
+                 <%= link_to "×", "#", id: "delete#{event.id}" ,class: "deleteDate"%>
+               </div>
+               <% end %>
+            <% end %>
               <div class="dateForm" style="word-spacing: -1em;">
               <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , nil, class: 'datepicker' -%>
               <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
                              options_for_select(item.item_options_for_select, nil),
                              include_blank: true, class: 'selectMark' -%>
               <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'-%>
+              <% @date_idx += 1 %>
               </div>
-              <% end %>
             </div>
             <a href="#" class="addEvent" id="event<%= item.id %>">日程を追加する</a>
           </div>
@@ -130,12 +131,26 @@ $(function() {
 
   $('input.datepicker').datepicker();
 
-
   $(document.body).on('click', '.removeDate',  function(e) {
-    console.log("remove");
     $(this).parent().remove();
     return false;
   });
+  <% if @item.id %>
+  $(".deleteDate").click(function (e) {
+    e.preventDefault();
+    <% if defined?(use_admin) %>
+    var deleteURL = '<%= webdb_db_entry_path(content: @content) %>/delete_event';
+    <% else %>
+    var deleteURL = '<%= @item.delete_event_uri %>';
+    <% end %>
+    var itemId = $(this).attr('id')
+    var dateID = itemId.replace(/delete/, '')
+    $.get( deleteURL + '?event_id=' + dateID , function(data) {
+        //
+      });
+    $(this).parent().remove();
+  });
+  <% end %>
 
   $('.addEvent').click(function(e) {
 

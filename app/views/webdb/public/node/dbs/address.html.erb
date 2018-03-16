@@ -2,7 +2,6 @@
 <table class="show">
 <% @items.each do |item| %>
   <div class="criteria_<%=item.name%>">
-    <fieldset>
       <legend><%=item.title%></legend>
       <ul>
       <%- case item.item_type -%>
@@ -43,7 +42,6 @@
         <%= text_field_tag item.name, '' %>
       <%end%>
       </ul>
-    </fieldset>
   </div>
 <% end %>
 </table>

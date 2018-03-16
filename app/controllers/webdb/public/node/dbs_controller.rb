@@ -72,15 +72,29 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
 
   def edit
     entry
+    return http_error(404) if @editor_user.blank?
   end
 
   def update
     entry
+    return http_error(404) if @editor_user.blank?
     @item.attributes = entry_params
     if @item.save
       return redirect_to "#{@node.public_uri}list/"
     else
       render :edit
+    end
+  end
+
+  def delete_event
+    entry
+    return http_error(404) if @editor_user.blank?
+    @event = @item.dates.find_by(id: params[:event_id])
+    return http_error(404) unless @event
+    if @event.destroy
+      render plain: "OK"
+    else
+      render plain: "NG"
     end
   end
 

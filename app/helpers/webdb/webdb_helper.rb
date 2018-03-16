@@ -47,24 +47,42 @@ module Webdb::WebdbHelper
         select_data.each{|e| value = e[0] if e[1]== entry.item_values[item.name].to_i }
       end
     when 'blank_date'
-      blank_dates = []
+      head = Date.parse(params[:date]) rescue Date.today
+      tail = head.since(7.days)
+      links = content_tag(:div, class:"week") do
+        concat content_tag(:a, "前の週",
+           href: %Q(?date=#{head.ago(7.days).strftime("%Y-%m-%d")}), class: "prev")
+        concat content_tag(:a, "次の週",
+           href: %Q(?date=#{tail.strftime("%Y-%m-%d")}), class: "next")
+      end
+      event_dates = entry.dates.where(name: item.name)
+          .where(Webdb::EntryDate.arel_table[:event_date].gteq(head))
+          .where(Webdb::EntryDate.arel_table[:event_date].lt(tail))
+          .group_by {|item| item.event_date.strftime("%m/%d") }
       thead = content_tag(:thead) do
         content_tag(:tr) do
-          entry.dates.where(name: item.name).each{|e|
-            blank_dates << e.option_value
-            concat content_tag(:th, e.event_date.strftime("%m/%d"), class: "text-center")
-          }
+            (head..tail).each { |date|
+              concat content_tag(:th, date.strftime("%m/%d"), class: "text-center")
+            }
         end
       end
       tbody = content_tag(:tbody) do
+        tags = []
         content_tag(:tr, class: "text-center") do
-          blank_dates.each_with_index do |k, v|
-            concat content_tag(:td, k)
-          end
+            (head..tail).each { |date|
+              tags << content_tag(:td) do
+                if event_dates[date.strftime("%m/%d")]
+                  event_dates[date.strftime("%m/%d")].each{|d| concat d.option_value }
+                end
+              end
+            }
+            safe_join tags
         end
       end
-      value = content_tag(:table, class: item.name) do
-        thead + tbody
+      value = content_tag(:div, class: item.name) do
+        content_tag(:table) do
+          links + thead + tbody
+        end
       end
     when 'blank_weekday'
       if entry.item_values.dig(item.name, 'weekday')
@@ -129,7 +147,6 @@ module Webdb::WebdbHelper
           w = entry.class::WEEKDAY_OPTIONS[i]
           open_at = entry.item_values.dig(item.name, 'open', i.to_s)
           close_at = entry.item_values.dig(item.name, 'close', i.to_s)
-          Rails.logger.debug [open_at, close_at]
           next if open_at.blank? && close_at.blank?
           tags << content_tag(:tr) do
             concat content_tag(:th, w)

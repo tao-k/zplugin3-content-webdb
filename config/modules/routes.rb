@@ -18,6 +18,9 @@ ZomekiCMS::Application.routes.draw do
       resources :entries,
         :controller => 'admin/entries' do
           get 'file_contents/(*path)' => 'admin/entries/files#content'
+          member do
+            get :delete_event
+          end
           collection do
             post :import
             get  :import
@@ -54,6 +57,7 @@ ZomekiCMS::Application.routes.draw do
     get  'node_dbs/:db_id/entry/:name/file_contents/(*path)' => 'public/node/dbs#file_content'
     get  'node_dbs/:db_id/edit/:name(/index)' => 'public/node/dbs#edit'
     put  'node_dbs/:db_id/edit/:name(/index)' => 'public/node/dbs#update'
+    get  'node_dbs/:db_id/delete_event/:name(/index)' => 'public/node/dbs#delete_event'
 
     ## remnants
     get  'node_remnants(/index)'         => 'public/node/remnants#index'
