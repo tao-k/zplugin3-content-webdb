@@ -35,14 +35,14 @@
             <%= check_box_tag "item[item_values][#{item.name}][check][]", w,
               item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w).present? : false,
               id: "item_item_values_#{item.name}_check_#{i}" %>
-              <label for="item_item_values_<%=item.name%>_check_#{i}"><%= w %></label>
+              <label for="item_item_values_<%=item.name%>_check_<%=i%>"><%= w %></label>
           <%- } -%>
          <%- when 'check_data' -%>
           <%- item.item_options_for_select_data.each_with_index{|w, i| -%>
             <%= check_box_tag "item[item_values][#{item.name}][check][]", w[1],
               item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w[1].to_s).present? : false,
               id: "item_item_values_#{item.name}_check_#{i}"  %>
-              <label for="item_item_values_<%=item.name%>_check_#{i}"><%= w[0] %></label>
+              <label for="item_item_values_<%=item.name%>_check_<%=i%>"><%= w[0] %></label>
           <%- } -%>
          <%- when 'radio_button' -%>
           <%- item.item_options_for_select.each_with_index{|option, i| -%>
