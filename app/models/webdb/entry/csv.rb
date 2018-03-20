@@ -86,10 +86,10 @@ class Webdb::Entry::Csv < Webdb::Csv
       end
     end
 
-    entry_attributes[:item_values] = json_attributes
+    entry_attributes[:json_values] = json_attributes
 
     entry_attributes.each do |key , value|
-      next if key == :rid
+      next if key == :rid || key == :json_values
       entry[key] = value
     end
     entry.validate
@@ -106,8 +106,15 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes = line.csv_data_attributes['entry_attributes']
     date_attributes  = line.csv_data_attributes['date_attributes']
     entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
+    if json_value = entry_attributes['json_values']
+      item_values = entry.item_values.presence || {}
+      json_value.each do |key , value|
+        item_values[key] = value
+      end
+      entry.item_values = item_values
+    end
     entry_attributes.each do |key , value|
-      next if key == :id
+      next if key == 'id' || key == 'json_values'
       entry[key] = value
     end
     entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?

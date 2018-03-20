@@ -32,23 +32,30 @@
                          include_blank: true %>
         <%- when 'check_box' -%>
           <%- item.item_options_for_select.each_with_index{|w, i| -%>
-            <label><%= check_box_tag "item[item_values][#{item.name}][check][]", w,
-              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w).present? : false %><%= w %></label>
+            <%= check_box_tag "item[item_values][#{item.name}][check][]", w,
+              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w).present? : false,
+              id: "item_item_values_#{item.name}_check_#{i}" %>
+              <label for="item_item_values_<%=item.name%>_check_#{i}"><%= w %></label>
           <%- } -%>
          <%- when 'check_data' -%>
           <%- item.item_options_for_select_data.each_with_index{|w, i| -%>
-            <label><%= check_box_tag "item[item_values][#{item.name}][check][]", w[1],
-              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w[1].to_s).present? : false %><%= w[0] %></label>
+            <%= check_box_tag "item[item_values][#{item.name}][check][]", w[1],
+              item_values.dig(item.name, 'check') ? item_values[item.name]['check'].index(w[1].to_s).present? : false,
+              id: "item_item_values_#{item.name}_check_#{i}"  %>
+              <label for="item_item_values_<%=item.name%>_check_#{i}"><%= w[0] %></label>
           <%- } -%>
          <%- when 'radio_button' -%>
-          <%- item.item_options_for_select.each{|option| -%>
-            <label><%= radio_button_tag "item[item_values][#{item.name}]", option,
-                                        option == item_values[item.name], style: item.style_attribute %> <%= option %></label>
+          <%- item.item_options_for_select.each_with_index{|option, i| -%>
+            <%= radio_button_tag "item[item_values][#{item.name}]", option,
+                option == item_values[item.name], style: item.style_attribute,
+                id: "item_item_values_#{item.name}_#{i}" %>
+            <label for="item_item_values_<%=item.name%>_<%=i%>"><%= option %></label>
           <%- } -%>
         <%- when 'radio_data' -%>
           <%- item.item_options_for_select_data.each_with_index{|w, i| -%>
-            <label><%= radio_button_tag "item[item_values][#{item.name}]", w[1],
-                                        w[1] == item_values[item.name].to_i, style: item.style_attribute %> <%= w[0] %></label>
+            <%= radio_button_tag "item[item_values][#{item.name}]", w[1],
+                                        w[1] == item_values[item.name].to_i, style: item.style_attribute %>
+            <label for="item_item_values_<%=item.name%>_<%=w[1]%>"><%= w[0] %></label>
           <%- } -%>
         <%- when 'attachment_file' -%>
           <%= text_field_tag "item[item_values][#{item.name}]", item_values[item.name], style: item.style_attribute %>
@@ -57,15 +64,16 @@
         <%- when 'ampm' -%>
         <div><span>午前</span>
           <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
-            <label><%= check_box_tag "item[item_values][#{item.name}][am][#{i}]", true,
-              item_values.dig(item.name, 'am') ? item_values[item.name]['am'][i.to_s] : false %><%= w %></label>
+            <%= check_box_tag "item[item_values][#{item.name}][am][#{i}]", true,
+              item_values.dig(item.name, 'am') ? item_values[item.name]['am'][i.to_s] : false %>
+            <label for="item_item_values_<%=item.name%>_am_<%=i%>"><%= w %></label>
           <%- } -%>
         </div>
         <div><span>午後</span>
           <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
-            <label>
             <%= check_box_tag "item[item_values][#{item.name}][pm][#{i}]", '○',
-              item_values.dig(item.name, 'pm') ? item_values[item.name]['pm'][i.to_s] : false %><%= w %></label>
+              item_values.dig(item.name, 'pm') ? item_values[item.name]['pm'][i.to_s] : false %>
+            <label for="item_item_values_<%=item.name%>_pm_<%=i%>"><%= w %></label>
           <%- } -%>
         </div>
         <%- when 'office_hours' -%>

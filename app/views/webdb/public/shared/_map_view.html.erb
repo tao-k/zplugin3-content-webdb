@@ -1,10 +1,8 @@
 <%
-
 map     = item.maps.first
 markers = map ? map.markers : []
-return render(:text => "") unless map
-return render(:text => "") if map.map_lat.blank? || map.map_lng.blank?
-
+return '' unless map
+return '' if map.map_lat.blank? || map.map_lng.blank?
 %>
 <%- if item.state != 'closed' -%>
 <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{item.site.google_map_api_key}&region=jp" %>
@@ -29,15 +27,17 @@ addEvent(window, 'load', function() {
   };
   var map = new google.maps.Map(document.getElementById("map1"), mapOptions);
 
-  <% markers.each_with_index do |marker, idx| %>
+  <%
+  map_icon = item.map_icon
+  markers.each_with_index do |marker, idx| %>
     var marker<%= idx %> = new google.maps.Marker({
       //title: '<%= marker.name.gsub(/'/, "\\\\'") %>'
       position: new google.maps.LatLng(<%= marker.lat %>, <%= marker.lng %>),
       map: map
     });
 
-    <%- if item.content.respond_to?(:map_content_marker) && (map_content = item.content.map_content_marker) -%>
-    marker<%= idx %>.setIcon('<%= map_content.icon_image(item.marker_icon_category || item.marker_categories.first) %>');
+    <%- if map_icon -%>
+    marker<%= idx %>.setIcon('<%= map_icon %>');
     <%- end -%>
 
     var infowindow<%= idx %> = new google.maps.InfoWindow({

@@ -24,13 +24,14 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
     @items = @db.public_items.target_search_state
   end
 
-  def map
-    result
-    @markers = @items.joins(maps: :markers)
-  end
-
-  def address
+  def remnant
+    @db    = @content.public_dbs.find_by(id: params[:db_id])
+    return http_error(404) unless @db
     Page.title = @db.title
+    @date_items = @db.public_items.item_type_is('blank_date')
+    @number_items = @db.public_items.item_type_is('blank_integer')
+    @week_items = @db.public_items.item_type_is('blank_weekday')
+    @search_url = "#{@node.try(:public_uri)}#{@db.id}/search"
   end
 
   def result
@@ -73,11 +74,13 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
   def edit
     entry
     return http_error(404) if @editor_user.blank?
+    return http_error(404) if @editor_user.id != @item.editor_id
   end
 
   def update
     entry
     return http_error(404) if @editor_user.blank?
+    return http_error(404) if @editor_user.id != @item.editor_id
     @item.attributes = entry_params
     if @item.save
       return redirect_to "#{@node.public_uri}list/"

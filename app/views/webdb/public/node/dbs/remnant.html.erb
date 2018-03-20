@@ -5,23 +5,26 @@
   <script src="/_common/js/jquery-ui-timepicker-addon.js"></script>
   <%= javascript_include_tag '/_common/js/jquery-ui-datepicker-ja.js' %>
   <%= javascript_include_tag '/_common/js/jquery-ui-timepicker-addon-ja.js' %>
-  <%= form_tag "#{@node.public_uri}#{@db.id}/search", method: :get, class: 'search' do |f| %>
-    <%= hidden_field_tag 'sort', @db.items.target_sort_state.first.try(:name) %>
-    <div class="search_keyword">
-        <legend>キーワード</legend>
-        <ul>
-          <li><%= text_field_tag "keyword", '' %></li>
-        </ul>
-    </div>
-  <%= render 'webdb/public/shared/form', db: @db, items: @items%>
 
-  <div class="submitters">
-    <input type="submit" value="検索" />
-  </div>
+  <%= form_tag @search_url, method: :get, class: 'search' do |f| %>
+    <div id="dateForm">
+      <%= render 'webdb/public/shared/form', db: @db, items: @date_items %>
+    </div>
+    <div id="numberForm">
+      <%= render 'webdb/public/shared/form', db: @db, items: @number_items %>
+    </div>
+    <div id="weekForm">
+      <%= render 'webdb/public/shared/form', db: @db, items: @week_items %>
+    </div>
+    <div class="submitters">
+      <input type="submit" value="検索" />
+    </div>
   <%- end -%>
 <%= javascript_tag do %>
 $(function() {
+
   $('input.datepicker').datepicker();
+
 });
 <%- end -%>
 

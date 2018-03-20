@@ -28,11 +28,11 @@ class Webdb::EntriesFinder < ApplicationFinder
         if value['weekday']
           qs = []
           day_values = {}
-          7.times do |i|
-            val = value['weekday'][i.to_s]
-            next if val.blank?
-            qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{i})"
-            day_values["day_value#{i}".to_sym] = {i.to_s => val}.to_json
+          value['weekday'].each do |key, val|
+            day_value = value.dig('option', key)
+            next if val.blank? || day_value.blank?
+            qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{key})"
+            day_values["day_value#{key}".to_sym] = {key => day_value}.to_json
           end
           @entries = @entries.where(qs.join(' OR '), day_values)
         end

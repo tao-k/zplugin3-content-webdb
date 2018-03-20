@@ -51,17 +51,13 @@ ZomekiCMS::Application.routes.draw do
     get  'node_dbs(/index)'            => 'public/node/dbs#index'
     get  'node_dbs/list(/index)'       => 'public/node/dbs#editors'
     get  'node_dbs/:id(/index)'        => 'public/node/dbs#show'
-    get  'node_dbs/:db_id/map'         => 'public/node/dbs#map'
+    get  'node_dbs/:db_id/remnant'     => 'public/node/dbs#remnant'
     get  'node_dbs/:db_id/search'      => 'public/node/dbs#result'
     get  'node_dbs/:db_id/entry/:name(/index)' => 'public/node/dbs#entry'
     get  'node_dbs/:db_id/entry/:name/file_contents/(*path)' => 'public/node/dbs#file_content'
     get  'node_dbs/:db_id/edit/:name(/index)' => 'public/node/dbs#edit'
     put  'node_dbs/:db_id/edit/:name(/index)' => 'public/node/dbs#update'
     get  'node_dbs/:db_id/delete_event/:name(/index)' => 'public/node/dbs#delete_event'
-
-    ## remnants
-    get  'node_remnants(/index)'         => 'public/node/remnants#index'
-    get  'node_remnants/:id(/index)'     => 'public/node/remnants#show'
   end
 
 end

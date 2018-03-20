@@ -16,10 +16,8 @@ module Webdb::WebdbHelper
     end
     return nil if template_body.blank?
     template_body   = template_body.html_safe
-    #template_header = template_body.gsub(/\[\[view\/header\]\](.*)[\[view\/header\]\]/i, '\1')
-    #template_footer = template_body.gsub(/\[\[view\/footer\]\](.*)[\[view\/footer\]\]/i, '\1')
     template_body   = template_body.gsub(/\[\[link\/detail_url\]\]/i, entry.public_uri)
-    template_body   = template_body.gsub(/\[\[view\/map\]\]/i, render_map(entry))
+    template_body   = template_body.gsub(/\[\[view\/map\]\]/i, render_map(entry)) if template_body =~ /\[\[view\/map\]\]/
     return_body = nil
     files = entry.files
     db.items.inject(template_body.to_s) do |body, item|
@@ -174,7 +172,7 @@ module Webdb::WebdbHelper
   end
 
   def render_map(item)
-    render 'cms/public/_partial/maps/view', item: item
+    return render('webdb/public/shared/map_view', item: item) || ''
   end
 
   def map_icon(icon_id, db)
