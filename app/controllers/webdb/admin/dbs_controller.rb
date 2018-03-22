@@ -34,14 +34,12 @@ class Webdb::Admin::DbsController < Cms::Controller::Admin::Base
 
   def update
     @item = @content.dbs.find(params[:id])
-    return error_auth if !Core.user.root? && @item.root?
     @item.attributes = db_params
     _update(@item)
   end
 
   def destroy
     @item = @content.dbs.find(params[:id])
-    return error_auth if !Core.user.root? && @item.root?
     _destroy(@item)
   end
 
