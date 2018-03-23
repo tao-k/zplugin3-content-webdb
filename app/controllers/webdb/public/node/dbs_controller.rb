@@ -57,6 +57,8 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
     @list_style = @member_user.present? || @editor_user.present? ? :member_detail : :detail
     @item = @db.entries.find_by(name: params[:name])
     return http_error(404) unless @item
+    title_item = @db.items.public_state.first
+    Page.title = @item.item_values.dig(title_item.name) if title_item
   end
 
   def editors
