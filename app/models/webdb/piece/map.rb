@@ -23,5 +23,8 @@ class Webdb::Piece::Map < Cms::Piece
     target_dbs.map {|g| [g.title, g.id] }
   end
 
+  def window_text
+    setting_value(:window_text)
+  end
 
 end

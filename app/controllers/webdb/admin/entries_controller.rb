@@ -95,8 +95,9 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     require 'csv'
     db_items = @db.items.public_state
     data = CSV.generate(force_quotes: true) do |csv|
-      colums = [ "ID" ] + db_items.pluck(:title)
-      csv << colums
+      columns = [ "ID" ] + db_items.pluck(:title)
+      columns += ["緯度", "経度"]
+      csv << columns
       entries.each do |entry|
         item_array = [entry.id]
         files = entry.files
@@ -112,6 +113,12 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
           end
           item_array << value
         end
+        latlng = []
+        if map = entry.maps.first
+          first_marker = map.markers.first
+          item_array += [first_marker.lat, first_marker.lng] if first_marker
+        end
+        item_array += latlng
         csv << item_array
       end
     end

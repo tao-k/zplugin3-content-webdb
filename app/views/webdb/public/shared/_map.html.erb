@@ -23,7 +23,7 @@
       map_icon = item.map_icon
       map_markers.each do |marker| -%>
       map.set_marker('<%= "#{marker.latitude}_#{marker.longitude}" %>', <%= marker.latitude %>, <%= marker.longitude %>, '<%= marker.title %>',
-                     '<%=raw simple_format(marker.window_text, {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>',
+                     '<%=raw simple_format(marker_window_text(item, @piece), {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>',
                      '<%= map_icon %>' );
       <%- end -%>
     <%- end -%>

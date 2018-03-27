@@ -38,11 +38,11 @@
   <% if defined?(Zplugin3::Content::Login::Engine) %>
   <tr>
     <th><%= @item.class.human_attribute_name :member_content_id %></th>
-    <td><%= @item.member_content.try(:title) %></td>
+    <td><%= @item.member_content.try(:name) %></td>
    </tr>
   <tr>
     <th><%= @item.class.human_attribute_name :editor_content_id %></th>
-    <td><%= @item.editor_content.try(:title) %></td>
+    <td><%= @item.editor_content.try(:name) %></td>
   </tr>
   <% end %>
 </table>

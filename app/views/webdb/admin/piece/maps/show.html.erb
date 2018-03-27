@@ -6,5 +6,9 @@
     <th><%= @item.class.human_attribute_name :target_db_id %></th>
     <td><%= @item.target_db.try(:title) %></td>
   </tr>
+  <tr>
+    <th><%= @item.class.human_attribute_name :window_text %></th>
+    <td><%= raw simple_format(@item.window_text) %></td>
+  </tr>
 </table>
 <%- end -%>

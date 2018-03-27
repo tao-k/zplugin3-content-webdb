@@ -49,3 +49,4 @@ ja:
         target_db_id: 対象データベース
       webdb/piece/map:
         target_db_id: 対象データベース
+        window_text: 吹き出しHTML

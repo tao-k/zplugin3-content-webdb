@@ -7,13 +7,16 @@ class Webdb::Entry::Csv < Webdb::Csv
 
     entry = db.entries.where(id: row['ID']).first || db.entries.new
     entry_attributes = {}
+    item_name = ""
+    maps_attributes = []
     entry_attributes['db_id'] = db.id
     entry_attributes['id']    = row['ID']
     entry_attributes['title'] = row['タイトル']
     json_attributes = {}
     in_target_dates = {}
+
     date_idx = 0
-    db.items.each do |item|
+    db.items.each_with_index do |item, n|
       if row[item.title].blank?
         json_attributes[item.name] = nil
         next
@@ -84,6 +87,7 @@ class Webdb::Entry::Csv < Webdb::Csv
       else
         json_attributes[item.name] = row[item.title]
       end
+      item_name = json_attributes[item.name] if n == 0
     end
 
     entry_attributes[:json_values] = json_attributes
@@ -92,10 +96,20 @@ class Webdb::Entry::Csv < Webdb::Csv
       next if key == :rid || key == :json_values
       entry[key] = value
     end
+
+    if row['緯度'] && row['経度']
+      maps_attributes = [{
+          map_lat: row['緯度'], map_lng: row['経度'],
+          map_zoom: 14,
+          markers_attributes: [{lat: row['緯度'], lng: row['経度'], name: item_name}]
+        }]
+    end
+
     entry.validate
     line.data_attributes = {
       entry_attributes: entry_attributes,
-      date_attributes: in_target_dates
+      date_attributes: in_target_dates,
+      maps_attributes: maps_attributes
     }
     line.data_invalid = entry.errors.blank? ? 0 : 1
     line.data_errors = entry.errors.full_messages.to_a if entry.errors.present?
@@ -105,6 +119,7 @@ class Webdb::Entry::Csv < Webdb::Csv
   def register(line)
     entry_attributes = line.csv_data_attributes['entry_attributes']
     date_attributes  = line.csv_data_attributes['date_attributes']
+    maps_attributes  = line.csv_data_attributes['maps_attributes']
     entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
     if json_value = entry_attributes['json_values']
       item_values = entry.item_values.presence || {}
@@ -118,7 +133,7 @@ class Webdb::Entry::Csv < Webdb::Csv
       entry[key] = value
     end
     entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
-
+    entry.maps_attributes = maps_attributes if maps_attributes.present?
     entry.save
     entry
   end

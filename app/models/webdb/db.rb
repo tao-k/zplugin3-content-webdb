@@ -62,10 +62,12 @@ class Webdb::Db < ApplicationRecord
     return nil if editor_content_id.blank?
     Login::Content::User.find_by(id: editor_content_id)
   end
-  private
+
+private
 
   def set_defaults
     self.state   = STATE_OPTIONS.first.last if self.has_attribute?(:state) && self.state.nil?
     self.sort_no = 10 if self.has_attribute?(:sort_no) && self.sort_no.nil?
   end
+
 end

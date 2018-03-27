@@ -26,8 +26,22 @@ module Webdb::WebdbHelper
     end
   end
 
+  def marker_window_text(entry, piece)
+    window_text = piece.window_text
+    if window_text.present?
+      entry.db.items.inject(window_text.to_s) do |body, item|
+        replace_body = item.is_limited_access ? '' : entry_item_value(item, entry, [])
+        body.gsub(/\[\[item\/#{item.name}\]\]/i, replace_body)
+      end
+    else
+      first_item = entry.db.items.first
+      return "" if first_item.blank?
+      return entry.item_values[first_item.name]
+    end
+  end
+
   def entry_item_value(item, entry, files)
-    return nil if item.blank? || entry.blank?
+    return '' if item.blank? || entry.blank?
     value = entry.item_values[item.name].present? ? entry.item_values[item.name] : ''
     case item.item_type
     when 'text_area'
@@ -39,6 +53,8 @@ module Webdb::WebdbHelper
         else
           value = content_tag('a', file.united_name, href: "file_contents/#{file.name}", class: file.css_class)
         end
+      else
+        value = ''
       end
     when 'select_data', 'radio_data'
       if select_data = item.item_options_for_select_data
@@ -166,7 +182,7 @@ module Webdb::WebdbHelper
       value = entry.item_values.dig(item.name, 'text').present? ? entry.item_values[item.name]['text'] : ''
     else
       uri_reg = URI.regexp(%w[http https])
-      value.gsub!(uri_reg) {%Q{<a href="#{$&}">#{$&}</a>}} if value.present?
+      value.gsub!(uri_reg) {%Q{<a href="#{$&}">#{$&}</a>}} if value.present? && value =~ uri_reg
     end
     value.html_safe
   end
