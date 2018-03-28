@@ -181,9 +181,11 @@ module Webdb::WebdbHelper
       end
     when 'check_box', 'check_data'
       value = entry.item_values.dig(item.name, 'text').present? ? entry.item_values[item.name]['text'] : ''
+    when 'rich_text'
+      value
     else
       uri_reg = URI.regexp(%w[http https])
-      value.gsub!(uri_reg) {%Q{<a href="#{$&}">#{$&}</a>}} if value.present? && value =~ uri_reg
+      value.gsub!(uri_reg) {%Q{<a href="#{$&}" target="_blank">#{$&}</a>}} if value.present? && value =~ uri_reg
     end
     value.html_safe
   end

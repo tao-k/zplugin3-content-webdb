@@ -8,7 +8,7 @@
   </tr>
   <tr>
     <th><%= @item.class.human_attribute_name :window_text %></th>
-    <td><%= raw simple_format(@item.window_text) %></td>
+    <td><%= hbr(@item.window_text) if @item.window_text.present? %></td>
   </tr>
 </table>
 <%- end -%>
