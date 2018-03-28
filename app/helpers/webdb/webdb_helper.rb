@@ -15,9 +15,9 @@ module Webdb::WebdbHelper
       nil
     end
     return nil if template_body.blank?
-    template_body   = template_body.html_safe
-    template_body   = template_body.gsub(/\[\[link\/detail_url\]\]/i, entry.public_uri)
-    template_body   = template_body.gsub(/\[\[view\/map\]\]/i, render_map(entry)) if template_body =~ /\[\[view\/map\]\]/
+    template_body = template_body.html_safe
+    template_body = template_body.gsub(/\[\[link\/detail_url\]\]/i, entry.public_uri)
+    template_body = template_body.gsub(/\[\[view\/map\]\]/i, render_map(entry)) if template_body =~ /\[\[view\/map\]\]/
     return_body = nil
     files = entry.files
     db.items.inject(template_body.to_s) do |body, item|
@@ -29,6 +29,7 @@ module Webdb::WebdbHelper
   def marker_window_text(entry, piece)
     window_text = piece.window_text
     if window_text.present?
+      window_text = window_text.gsub(/\[\[link\/detail_url\]\]/i, entry.public_uri)
       entry.db.items.inject(window_text.to_s) do |body, item|
         replace_body = item.is_limited_access ? '' : entry_item_value(item, entry, [])
         body.gsub(/\[\[item\/#{item.name}\]\]/i, replace_body)
