@@ -18,7 +18,10 @@ class Webdb::Admin::ItemsController < Cms::Controller::Admin::Base
 
   def show
     @item = @db.items.find(params[:id])
-    _show @item
+    respond_to do |format|
+      format.html { render }
+      format.json  { render :json => @item.to_json }
+    end
   end
 
   def new
