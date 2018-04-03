@@ -8,6 +8,6 @@ Cms::Lib::Modules::ModuleSet.draw :webdb, '検索DB', 999 do |mod|
   ## pieces
   mod.piece :forms   ,  '項目検索フォーム'
   mod.piece :maps    ,  'マップ検索フォーム'
-  mod.piece :groups  ,  'グループ検索フォーム'
+  mod.piece :groups  ,  'カテゴリー検索フォーム'
 
 end

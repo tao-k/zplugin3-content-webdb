@@ -62,7 +62,7 @@ class Webdb::Piece::Group < Cms::Piece
 
   def grouping_fields_for_option
     return [] if target_field.blank?
-    return [] if referemce_db = target_field.reference_db
+    return [] unless referemce_db = target_field.reference_db
     referemce_db.items.map {|g| [g.title, g.id] }
   end
 

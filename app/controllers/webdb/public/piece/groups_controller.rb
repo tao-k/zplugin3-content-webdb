@@ -20,7 +20,7 @@ class Webdb::Public::Piece::GroupsController < Sys::Controller::Public::Base
         { group: a.item_values.dig(@group_field.name),
           title: a.item_values.dig(@value_field.name),
           value: a.id} }
-    @from = @groups.group_by{ |i| i[:group]}
+    @forms = @groups.group_by{ |i| i[:group]}
   end
 
 end
