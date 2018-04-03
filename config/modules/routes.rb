@@ -42,6 +42,8 @@ ZomekiCMS::Application.routes.draw do
       :controller => 'admin/piece/forms'
     resources :piece_maps,
       :controller => 'admin/piece/maps'
+    resources :piece_groups,
+      :controller => 'admin/piece/groups'
   end
 
 
