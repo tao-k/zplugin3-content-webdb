@@ -88,6 +88,7 @@ $(document).ready(function() {
     var db_id = parseInt(event.target.value);
     if (isNaN(db_id)) {
       $('#item_reference_item_id').html('<option value=""></option>');
+      $('#item_icon_item_id').html('<option value=""></option>');
     } else {
       $('#item_reference_item_id').html('<option value="">更新中...</option>');
       $.get('<%= webdb_dbs_path(content: @content) %>/' + db_id + '/items.json', function(data) {
