@@ -16,11 +16,16 @@ class Webdb::Public::Piece::GroupsController < Sys::Controller::Public::Base
     return render plain: '' unless @group_field = @piece.grouping_field
     return render plain: '' unless @value_field = @piece.value_field
 
-    @groups = @reference_db.entries.public_state.map{|a|
+    groups = @reference_db.entries.public_state
+    if sort_field = @piece.sort_field
+      groups = groups.order("item_values -> '#{sort_field.name}' ASC")
+    end
+
+    groups = groups.map{|a|
         { group: a.item_values.dig(@group_field.name),
           title: a.item_values.dig(@value_field.name),
           value: a.id} }
-    @forms = @groups.group_by{ |i| i[:group]}
+    @forms = groups.group_by{ |i| i[:group]}
   end
 
 end

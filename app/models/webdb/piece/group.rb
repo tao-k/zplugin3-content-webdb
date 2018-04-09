@@ -35,7 +35,8 @@ class Webdb::Piece::Group < Cms::Piece
 
   def target_fields_for_option
     return [] if target_db.blank?
-    target_db.public_items.map {|g| [g.title, g.id] }
+    target_db.public_items
+      .where(Webdb::Item.arel_table[:item_type].matches('%data%')).map {|g| [g.title, g.id] }
   end
 
   def grouping_field_id
@@ -58,6 +59,17 @@ class Webdb::Piece::Group < Cms::Piece
     return nil if value_field_id.blank?
     return nil unless referemce_db = target_field.reference_db
     referemce_db.items.where(id: value_field_id).first
+  end
+
+  def sort_field_id
+    setting_value(:sort_field_id).to_i
+  end
+
+  def sort_field
+    return nil if target_field.blank?
+    return nil if sort_field_id.blank?
+    return nil unless referemce_db = target_field.reference_db
+    referemce_db.items.where(id: sort_field_id).first
   end
 
   def grouping_fields_for_option
