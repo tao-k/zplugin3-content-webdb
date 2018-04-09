@@ -18,6 +18,10 @@
     <th><%= f.label :value_field_id %></th>
     <td><%= f.array_select 'in_settings[value_field_id]', @item.grouping_fields_for_option, include_blank: true %></td>
   </tr>
+  <tr>
+    <th><%= f.label :sort_field_id %></th>
+    <td><%= f.array_select 'in_settings[sort_field_id]', @item.grouping_fields_for_option, include_blank: true %></td>
+  </tr>
 </table>
 <%- end -%>
 <%= javascript_tag do -%>
@@ -28,11 +32,15 @@ $(document).ready(function() {
       $('#item_in_settings_target_field_id').html('<option value=""></option>');
     } else {
       $('#item_reference_item_id').html('<option value="">更新中...</option>');
+      $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
+      $('#item_in_settings_value_field_id').html('<option value=""></option>');
+      $('#item_in_settings_sort_field_id').html('<option value=""></option>');
       $.get('<%= webdb_dbs_path(content: @item.content) %>/' + db_id + '/items.json', function(data) {
         $('#item_in_settings_target_field_id').children().remove();
         $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
         $('#item_in_settings_value_field_id').html('<option value=""></option>');
-        $('#item_in_settings_target_field_id').append($("<option>").val("").text(""));
+        $('#item_in_settings_sort_field_id').html('<option value=""></option>');
+        $('#item_in_settings_target_field_id').html('<option value=""></option>');
         $.each(data, function(i, e) {
           var item_type = data[i].item_type;
           if(['select_data', 'radio_data', 'check_data'].indexOf(item_type) >= 0){
@@ -54,6 +62,7 @@ $(document).ready(function() {
     if (isNaN(target_db_id) || isNaN(item_id)) {
       $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
       $('#item_in_settings_value_field_id').html('<option value=""></option>');
+      $('#item_in_settings_sort_field_id').html('<option value=""></option>');
     }else{
       $.get('<%= webdb_dbs_path(content: @item.content) %>/' + target_db_id + '/items/' + item_id +'.json', function(data) {
         if(data.reference_id){
@@ -71,11 +80,13 @@ $(document).ready(function() {
     } else {
       $('#item_reference_item_id').html('<option value="">更新中...</option>');
       $.get('<%= webdb_dbs_path(content: @item.content) %>/' + db_id + '/items.json', function(data) {
-        $('#item_in_settings_grouping_field_id').children().remove();
-        $('#item_in_settings_value_field_id').children().remove();
+      $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
+      $('#item_in_settings_value_field_id').html('<option value=""></option>');
+      $('#item_in_settings_sort_field_id').html('<option value=""></option>');
         $.each(data, function(i, e) {
           $('#item_in_settings_grouping_field_id').append($("<option>").val(data[i].id).text(data[i].title));
           $('#item_in_settings_value_field_id').append($("<option>").val(data[i].id).text(data[i].title));
+          $('#item_in_settings_sort_field_id').append($("<option>").val(data[i].id).text(data[i].title));
         });
       });
     }
