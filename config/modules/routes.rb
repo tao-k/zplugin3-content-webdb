@@ -33,10 +33,6 @@ ZomekiCMS::Application.routes.draw do
       :controller => 'admin/node/dbs',
       :path       => ':parent/node_dbs'
 
-    resources :node_remnants,
-      :controller => 'admin/node/remnants',
-      :path       => ':parent/node_remnants'
-
     ## pieces
     resources :piece_forms,
       :controller => 'admin/piece/forms'
@@ -44,6 +40,8 @@ ZomekiCMS::Application.routes.draw do
       :controller => 'admin/piece/maps'
     resources :piece_groups,
       :controller => 'admin/piece/groups'
+    resources :piece_remnants,
+      :controller => 'admin/piece/remnants'
   end
 
 
@@ -53,7 +51,6 @@ ZomekiCMS::Application.routes.draw do
     get  'node_dbs(/index)'            => 'public/node/dbs#index'
     get  'node_dbs/list(/index)'       => 'public/node/dbs#editors'
     get  'node_dbs/:id(/index)'        => 'public/node/dbs#show'
-    get  'node_dbs/:db_id/remnant'     => 'public/node/dbs#remnant'
     get  'node_dbs/:db_id/search'      => 'public/node/dbs#result'
     get  'node_dbs/:db_id/entry/:name(/index)' => 'public/node/dbs#entry'
     get  'node_dbs/:db_id/entry/:name/file_contents/(*path)' => 'public/node/dbs#file_content'
