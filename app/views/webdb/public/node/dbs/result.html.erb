@@ -8,13 +8,13 @@
         param.each do |p|-%>
           <%= hidden_field_tag "criteria[#{item.name}][]", p%>
         <%- end
-      when 'ampm', 'office_hours', 'blank_weekday'
+      when 'ampm', 'office_hours'
         param.each do |key, p|
           p.each do |c_key, c|-%>
           <%= hidden_field_tag "criteria[#{item.name}][#{key}][#{c_key}]", c%>
           <%- end -%>
         <%- end
-      when 'blank_date'
+      when 'blank_date', 'blank_weekday'
         param.each do |key, p| -%>
           <%= hidden_field_tag "criteria[#{item.name}][#{key}]", p%>
         <%- end

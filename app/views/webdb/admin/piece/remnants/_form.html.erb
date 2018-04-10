@@ -1,0 +1,38 @@
+<%= render 'shared/admin/piece/form', f: f do -%>
+<p class="form">詳細設定</p>
+
+<table class="show">
+  <tr>
+    <th><%= f.label :target_db_id %></th>
+    <td><%= f.array_select 'in_settings[target_db_id]', @item.target_dbs_for_option, include_blank: true %></td>
+  </tr>
+  <tr>
+    <th><%= f.label :target_field_id %></th>
+    <td><%= f.array_select 'in_settings[target_field_id]', @item.target_fields_for_option, include_blank: true %></td>
+  </tr>
+</table>
+<%- end -%>
+<%= javascript_tag do -%>
+$(document).ready(function() {
+  $('#item_in_settings_target_db_id').on('change', function (event) {
+    var db_id = parseInt(event.target.value);
+    if (isNaN(db_id)) {
+      $('#item_in_settings_target_field_id').html('<option value=""></option>');
+    } else {
+      $('#item_reference_item_id').html('<option value="">更新中...</option>');
+      $.get('<%= webdb_dbs_path(content: @item.content) %>/' + db_id + '/items.json', function(data) {
+        $('#item_in_settings_target_field_id').children().remove();
+        $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
+        $.each(data, function(i, e) {
+          var item_type = data[i].item_type;
+          if(item_type.match(/blank/)){
+            $('#item_in_settings_target_field_id')
+              .append($("<option>").val(data[i].id).text(data[i].title));
+          }
+        });
+      });
+    }
+  });
+
+});
+<%- end -%>
