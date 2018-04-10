@@ -35,7 +35,8 @@ class Webdb::Piece::Remnant < Cms::Piece
 
   def target_fields_for_option
     return [] if target_db.blank?
-    target_db.public_items.map {|g| [g.title, g.id] }
+    target_db.public_items
+      .where(Webdb::Item.arel_table[:item_type].matches('%blank%')).map {|g| [g.title, g.id] }
   end
 
 

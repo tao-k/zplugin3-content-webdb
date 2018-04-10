@@ -25,17 +25,16 @@ class Webdb::EntriesFinder < ApplicationFinder
           @entries = @entries.where("item_values -> '#{item.name}' -> 'pm' ?| array[:keys]", keys: pm_idx)
         end
       when 'blank_weekday'
-        if value['weekday']
-          qs = []
-          day_values = {}
-          value['weekday'].each do |key, val|
-            day_value = value.dig('option', key)
-            next if val.blank? || day_value.blank?
-            qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{key})"
-            day_values["day_value#{key}".to_sym] = {key => day_value}.to_json
-          end
-          @entries = @entries.where(qs.join(' OR '), day_values)
+
+        qs = []
+        day_values = {}
+        value.each do |key, val|
+          next if val.blank?
+          qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{key})"
+          day_values["day_value#{key}".to_sym] = {key => val}.to_json
         end
+        @entries = @entries.where(qs.join(' OR '), day_values)
+
       when 'blank_integer'
         @entries = @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
         @entries = @entries.where("item_values ->> '#{item.name}' != ''")
