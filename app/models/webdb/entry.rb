@@ -24,6 +24,10 @@ class Webdb::Entry < ApplicationRecord
 
   scope :public_state, -> { where(state: 'public') }
 
+  def default_map_position
+    content.default_map_position
+  end
+
   def site
     content.site
   end
