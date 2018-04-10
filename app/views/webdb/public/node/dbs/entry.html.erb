@@ -2,5 +2,8 @@
   <div id="printButton">
     <input value="印刷する" type="button">
   </div>
+  <%- if @item.editor_id.present? && @editor_user.present? && @editor_user.id == @item.editor_id -%>
+    <%= link_to "編集する", @item.edit_uri, class: 'editLink' -%>
+  <%- end -%>
   <%= raw entry_body(@list_style, @db, @item) %>
 </div>

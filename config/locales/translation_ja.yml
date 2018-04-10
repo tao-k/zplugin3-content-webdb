@@ -53,5 +53,6 @@ ja:
       webdb/piece/group:
         target_db_id: 対象データベース
         target_field_id: 検索対象項目
-        grouping_field_id: カテゴリータイプ項目
-        value_field_id: カテゴリー項目
+        grouping_field_id: 大分類
+        value_field_id: 小分類
+        sort_field_id: 並び順指定項目

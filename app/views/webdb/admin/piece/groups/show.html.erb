@@ -18,5 +18,9 @@
     <th><%= @item.class.human_attribute_name :value_field_id %></th>
     <td><%= @item.value_field.try(:title) %></td>
   </tr>
+  <tr>
+    <th><%= @item.class.human_attribute_name :sort_field_id %></th>
+    <td><%= @item.sort_field.try(:title) %></td>
+  </tr>
 </table>
 <%- end -%>
