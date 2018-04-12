@@ -95,11 +95,11 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     require 'csv'
     db_items = @db.items.public_state
     data = CSV.generate(force_quotes: true) do |csv|
-      columns = [ "ID" ] + db_items.pluck(:title)
+      columns = [ "ID", "状態" ] + db_items.pluck(:title)
       columns += ["緯度", "経度"]
       csv << columns
       entries.each do |entry|
-        item_array = [entry.id]
+        item_array = [entry.id, entry.state_text]
         files = entry.files
         db_items.each do |item|
           value = entry.item_values[item.name]

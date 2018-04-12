@@ -12,6 +12,7 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes['db_id'] = db.id
     entry_attributes['id']    = row['ID']
     entry_attributes['title'] = row['タイトル']
+    entry_attributes['state'] = state_to_status(entry, row['状態'])
     json_attributes = {}
     in_target_dates = {}
 
@@ -116,11 +117,17 @@ class Webdb::Entry::Csv < Webdb::Csv
     line
   end
 
+  def state_to_status(entry, state_str)
+    entry.class::STATE_OPTIONS.each{|a| return a[1] if a[0] == state_str }
+    return nil
+  end
+
   def register(line)
     entry_attributes = line.csv_data_attributes['entry_attributes']
     date_attributes  = line.csv_data_attributes['date_attributes']
     maps_attributes  = line.csv_data_attributes['maps_attributes']
     entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
+    entry.state = entry_attributes['state']
     if json_value = entry_attributes['json_values']
       item_values = entry.item_values.presence || {}
       json_value.each do |key , value|
