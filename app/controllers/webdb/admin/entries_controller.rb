@@ -123,7 +123,6 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
       end
     end
 
-    data = NKF.nkf('-s', data)
     send_data data, type: 'text/csv', filename: "#{@db.title}_データ一覧_#{Time.now.to_i}.csv"
   end
 
