@@ -37,6 +37,8 @@ class Webdb::Entry::Csv < Webdb::Csv
           item.item_options_for_select_data.each{|a| checks << a[1].to_s if a[0] == w}
         }
         json_attributes[item.name]['check'] = checks
+      when 'select_data', 'radio_data'
+        item.item_options_for_select_data.each{|a| json_attributes[item.name] = a[1] if a[0] == row[item.title] }
       when 'office_hours'
         json_attributes[item.name] = {}
         json_attributes[item.name]['open'] = {}
