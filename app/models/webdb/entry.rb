@@ -7,6 +7,7 @@ class Webdb::Entry < ApplicationRecord
   include Cms::Model::Rel::Map
   include Zplugin3::Content::Webdb::Model::Rel::TargetDate
 
+  STATE_OPTIONS = [['公開', 'public'], ['下書き', 'draft']]
   enum_ish :state, [:public, :draft], predicate: true
 
   WEEKDAY_OPTIONS = ['日', '月', '火', '水', '木', '金', '土','祝']
