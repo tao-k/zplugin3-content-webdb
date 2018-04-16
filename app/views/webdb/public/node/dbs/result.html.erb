@@ -30,7 +30,7 @@
   <%- end -%>
   <%= hidden_field_tag "keyword", params[:keyword]%>
   <%= select_tag 'sort',
-      options_from_collection_for_select(@db.items.target_sort_state, :id, :title, params[:sort]),
+      options_from_collection_for_select(@db.items.target_sort_state, :name, :title, params[:sort]),
       onchange: "submit(this.form)" %>
 </form>
 <% @items.each_with_index do |item, i| %>
