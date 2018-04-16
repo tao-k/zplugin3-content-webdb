@@ -180,7 +180,11 @@ module Webdb::WebdbHelper
         tbody + rbody
       end
     when 'check_box', 'check_data'
-      value = entry.item_values.dig(item.name, 'text').present? ? entry.item_values[item.name]['text'] : ''
+      if entry.item_values[item.name].present? && entry.item_values[item.name].kind_of?(Hash)
+        value = entry.item_values.dig(item.name, 'text').present? ? entry.item_values[item.name]['text'] : ''
+      else
+        value = ''
+      end
     when 'rich_text'
       value
     else
