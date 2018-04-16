@@ -94,7 +94,8 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
   def export_csv(entries)
     require 'csv'
     db_items = @db.items.public_state
-    data = CSV.generate(force_quotes: true) do |csv|
+    bom = %w(EF BB BF).map { |e| e.hex.chr }.join
+    data = CSV.generate(bom, force_quotes: true) do |csv|
       columns = [ "ID", "状態" ] + db_items.pluck(:title)
       columns += ["緯度", "経度"]
       csv << columns
