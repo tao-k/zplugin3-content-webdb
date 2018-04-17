@@ -63,13 +63,15 @@ module Webdb::WebdbHelper
         select_data.each{|e| value = e[0] if e[1]== entry.item_values[item.name].to_i }
       end
     when 'blank_date'
+      qp = query_params(request.fullpath)
+      qs = query_string(qp)
       head = Date.parse(params[:date]) rescue Date.today
       tail = head.since(7.days)
       links = content_tag(:div, class:"week") do
         concat content_tag(:a, "前の週",
-           href: %Q(?date=#{head.ago(7.days).strftime("%Y-%m-%d")}), class: "prev")
+           href: %Q(#{qs}#{(qs.blank? ? '?' : '&')}date=#{head.ago(7.days).strftime("%Y-%m-%d")}), class: "prev")
         concat content_tag(:a, "次の週",
-           href: %Q(?date=#{tail.strftime("%Y-%m-%d")}), class: "next")
+           href: %Q(#{qs}#{(qs.blank? ? '?' : '&')}date=#{tail.strftime("%Y-%m-%d")}), class: "next")
       end
       event_dates = entry.dates.where(name: item.name)
           .where(Webdb::EntryDate.arel_table[:event_date].gteq(head))
@@ -171,11 +173,15 @@ module Webdb::WebdbHelper
         end
         safe_join tags
       end
-      rbody = content_tag(:tbody) do
-        content_tag(:tr, class: "text-center") do
-          concat content_tag(:th, "備考")
-          concat content_tag(:td, entry.item_values.dig(item.name, 'remark'))
+      if entry.item_values.dig(item.name, 'remark').present?
+        rbody = content_tag(:tbody) do
+          content_tag(:tr, class: "text-center") do
+            concat content_tag(:th, "備考")
+            concat content_tag(:td, entry.item_values.dig(item.name, 'remark'))
+          end
         end
+      else
+        rbody = ""
       end
       value = content_tag(:table, class: item.name) do
         tbody + rbody
@@ -226,17 +232,10 @@ module Webdb::WebdbHelper
     return links if links.blank?
 
     links.gsub!(/href="([^"]+)/im) do |m|
-      qp   = (m =~ /\?/) ? Rack::Utils.parse_query(m.gsub(/.*\?/, '').gsub(/&amp;/, '&')) : {}
+      qp = query_params(m)
       page = qp['page'].to_s =~ /^\d+$/ ? qp['page'].to_i : 1
       uri = Page.uri.dup
-      qs = qp.size > 0 ? '?' + qp.map { |k, v|
-        if v.kind_of?(Array)
-          ret = v.map{|vp| "#{k}=#{vp}" }
-          ret.join('&')
-        else
-          "#{k}=#{v}"
-        end
-      }.join('&') : ''
+      qs = query_string(qp)
       %(href="#{uri.force_encoding('UTF-8')}#{qs.force_encoding('UTF-8')})
     end
 
@@ -250,6 +249,22 @@ module Webdb::WebdbHelper
       end
     end
     links.html_safe
+  end
+
+  def query_params(url)
+    (url =~ /\?/) ? Rack::Utils.parse_query(url.gsub(/.*\?/, '').gsub(/&amp;/, '&')) : {}
+  end
+
+  def query_string(qp)
+    qs = qp.size > 0 ? '?' + qp.map { |k, v|
+        if v.kind_of?(Array)
+          ret = v.map{|vp| "#{k}=#{vp}" }
+          ret.join('&')
+        else
+          "#{k}=#{v}"
+        end
+      }.join('&') : ''
+    qs
   end
 
 end
