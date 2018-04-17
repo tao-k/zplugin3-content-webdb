@@ -44,13 +44,6 @@ class Webdb::EntriesFinder < ApplicationFinder
             .where(date_arel_table[:event_date].eq(date))
             .where(date_arel_table[:option_value].eq(value[:option]))
         end
-      when 'office_hours'
-        open_idx = value['open'].present? ? value['open'].keys : []
-        if open_idx.present?
-          @entries = @entries.where(
-            "(item_values -> '#{item.name}' -> 'am' ?| array[:open_keys])",
-            open_keys: open_idx)
-        end
       else
         if value.kind_of?(Array)
           @entries = @entries.where("item_values ->> '#{item.name}' IN(:keys)", keys: value)
