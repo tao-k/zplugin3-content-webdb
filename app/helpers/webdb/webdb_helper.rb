@@ -1,6 +1,7 @@
 require "uri"
 module Webdb::WebdbHelper
 
+
   def entry_body(type, db, entry, mode: :body)
     template_body = case type
     when :list
@@ -204,6 +205,51 @@ module Webdb::WebdbHelper
     icon = Webdb::Entry.find_by(id: icon_id)
     return nil if icon.blank? || icon.item_values.blank?
     return icon.item_values[icon_column.icon_item.try(:name)]
+  end
+
+
+  ## paginates
+  def public_paginate(items, options = {})
+    return '' unless items
+    defaults = {
+      :params         => p,
+      :previous_label => '前',
+      :next_label     => '次',
+      :link_separator => '<span class="separator"> | </span' + "\n" + '>'
+    }
+    if request.mobile? && !request.smart_phone?
+      defaults[:page_links]     = false
+      defaults[:previous_label] = '&lt;&lt;*前へ'
+      defaults[:next_label]     = '次へ#&gt;&gt;'
+    end
+    links = will_paginate(items, defaults.merge!(options))
+    return links if links.blank?
+
+    links.gsub!(/href="([^"]+)/im) do |m|
+      qp   = (m =~ /\?/) ? Rack::Utils.parse_query(m.gsub(/.*\?/, '').gsub(/&amp;/, '&')) : {}
+      page = qp['page'].to_s =~ /^\d+$/ ? qp['page'].to_i : 1
+      uri = Page.uri.dup
+      qs = qp.size > 0 ? '?' + qp.map { |k, v|
+        if v.kind_of?(Array)
+          ret = v.map{|vp| "#{k}=#{vp}" }
+          ret.join('&')
+        else
+          "#{k}=#{v}"
+        end
+      }.join('&') : ''
+      %(href="#{uri.force_encoding('UTF-8')}#{qs.force_encoding('UTF-8')})
+    end
+
+    if request.mobile? && !request.smart_phone?
+      if options[:previous_accesskey] && options[:next_accesskey]
+        links.gsub!(/<a [^>]*?rel="prev( |")/) {|m| m.gsub(/<a /, "<a accesskey='#{options[:previous_accesskey]}' ")}
+        links.gsub!(/<a [^>]*?rel="next( |")/) {|m| m.gsub(/<a /, "<a accesskey='#{options[:next_accesskey]}' ")}
+      else
+        links.gsub!(/<a [^>]*?rel="prev( |")/) {|m| m.gsub(/<a /, '<a accesskey="*" ')}
+        links.gsub!(/<a [^>]*?rel="next( |")/) {|m| m.gsub(/<a /, '<a accesskey="#" ')}
+      end
+    end
+    links.html_safe
   end
 
 end
