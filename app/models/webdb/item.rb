@@ -12,7 +12,7 @@ class Webdb::Item < ApplicationRecord
                        ['データベース参照選択/単数回答（プルダウン）', 'select_data'],['データベース参照選択/単数回答（ラジオボタン）', 'radio_data'],
                        ['選択/複数回答（チェックボックス）', 'check_box'],['データベース参照選択/複数回答（チェックボックス）', 'check_data'],['添付ファイル', 'attachment_file'],
                        ['郵便番号', 'postal_code'],['曜日/午前・午後', 'ampm'],['曜日/時間', 'office_hours'],
-                       ['空枠/数値', 'blank_integer'],['空枠/数値（曜日）', 'blank_weekday'],['空枠/記号（日程）', 'blank_date']]
+                       ['空枠/数値', 'blank_integer'],['空枠/記号（曜日）', 'blank_weekday'],['空枠/記号（日程）', 'blank_date']]
 
   default_scope { order("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no") }
 
