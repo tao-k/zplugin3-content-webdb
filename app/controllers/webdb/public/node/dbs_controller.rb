@@ -39,7 +39,7 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
     Page.title = @db.title
     @entries = @db.entries.public_state
     criteria = entry_criteria
-    @items = Webdb::EntriesFinder.new(@db, @entries).search(criteria, keyword, sort_key)
+    @items = Webdb::EntriesFinder.new(@db, @entries).search(criteria, keyword, "#{sort_key} #{order_key}")
       .paginate(page: params[:page], per_page: @db.display_limit || params[:limit])
   end
 
@@ -117,6 +117,10 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
 
   def sort_key
     params[:sort] ? params[:sort] : nil
+  end
+
+  def order_key
+    params[:order] ? params[:order] : 'asc'
   end
 
   def keyword
