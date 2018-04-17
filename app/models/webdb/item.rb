@@ -16,6 +16,9 @@ class Webdb::Item < ApplicationRecord
 
   default_scope { order("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no") }
 
+  after_save     Webdb::Publisher::DbCallbacks.new, if: :changed?
+  before_destroy Webdb::Publisher::DbCallbacks.new
+
   belongs_to :db
   validates :db_id, presence: true
 

@@ -23,6 +23,9 @@ class Webdb::Entry < ApplicationRecord
   before_save :set_name
   before_save :set_text
 
+  after_save     Webdb::Publisher::DbCallbacks.new, if: :changed?
+  before_destroy Webdb::Publisher::DbCallbacks.new
+
   scope :public_state, -> { where(state: 'public') }
 
   def default_map_position

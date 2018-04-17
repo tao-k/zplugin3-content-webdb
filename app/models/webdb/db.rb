@@ -14,6 +14,8 @@ class Webdb::Db < ApplicationRecord
   has_many :items, foreign_key: :db_id, class_name: 'Webdb::Item', dependent: :destroy
   has_many :entries, foreign_key: :db_id, class_name: 'Webdb::Entry', dependent: :destroy
 
+  after_save     Webdb::Publisher::DbCallbacks.new, if: :changed?
+  before_destroy Webdb::Publisher::DbCallbacks.new
 
   STATE_OPTIONS = [['公開', 'public'], ['非公開', 'closed']]
   ORDERING_OPTIONS = [['昇順', 'asc'], ['降順', 'desc']]
