@@ -9,7 +9,7 @@ class Webdb::Public::Piece::RemnantsController < Sys::Controller::Public::Base
   end
 
   def index
-    @items = @piece.target_field.present? ? [@piece.target_field] : []
+    @items = @piece.target_fields
   end
 
 end

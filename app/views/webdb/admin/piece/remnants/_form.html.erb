@@ -8,25 +8,68 @@
   </tr>
   <tr>
     <th><%= f.label :target_field_id %></th>
-    <td><%= f.array_select 'in_settings[target_field_id]', @item.target_fields_for_option, include_blank: true %></td>
+    <td>
+    <table class="show" id="target_field_list">
+      <% if @item.target_fields.present? -%>
+        <%- @item.target_fields.each_with_index do |field, i| -%>
+        <tr class="target_firld_tr">
+          <td><%= select_tag 'target_field_id[]',
+            options_for_select(@item.target_fields_for_option, field.id),
+            include_blank: true, class: 'target_field_select' %>
+            <%= link_to "×", "#", class: 'remove' if i != 0 %>
+          </td>
+         </tr>
+        <%- end -%>
+      <%- else -%>
+      <tr class="target_firld_tr">
+       <td><%= select_tag 'target_field_id[]',
+          options_for_select(@item.target_fields_for_option, nil),
+          include_blank: true, class: 'target_field_select' %>
+       </td>
+      </tr>
+      <%- end -%>
+      </table>
+      <%= button_tag '追加', type: 'button', class: 'add_button' %>
+    </td>
   </tr>
 </table>
 <%- end -%>
 <%= javascript_tag do -%>
 $(document).ready(function() {
+
+  $('.add_button').click(function(e) {
+    var idx = $(".target_firld_tr").length;
+    $("#target_field_list > tbody > tr:last").clone(true).appendTo(
+      $("#target_field_list > tbody")
+    );
+    if(idx==1){
+      $('<a>').attr({
+          class: "remove",
+          href: "#"
+      }).html("×").appendTo($("#target_field_list > tbody > tr:last > td"));
+    }
+  });
+
+  $(document.body).on('click', '.remove',  function(e) {
+    $(this).closest("tr").remove();
+    console.log($(this).closest("tr"));
+    return false;
+  });
+
   $('#item_in_settings_target_db_id').on('change', function (event) {
     var db_id = parseInt(event.target.value);
+    var target_fields = $(".target_field_select")
     if (isNaN(db_id)) {
-      $('#item_in_settings_target_field_id').html('<option value=""></option>');
+      target_fields.html('<option value=""></option>');
     } else {
       $('#item_reference_item_id').html('<option value="">更新中...</option>');
       $.get('<%= webdb_dbs_path(content: @item.content) %>/' + db_id + '/items.json', function(data) {
-        $('#item_in_settings_target_field_id').children().remove();
-        $('#item_in_settings_grouping_field_id').html('<option value=""></option>');
+        target_fields.children().remove();
+        target_fields.html('<option value=""></option>');
         $.each(data, function(i, e) {
           var item_type = data[i].item_type;
           if(item_type.match(/blank/)){
-            $('#item_in_settings_target_field_id')
+            target_fields
               .append($("<option>").val(data[i].id).text(data[i].title));
           }
         });

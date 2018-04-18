@@ -6,9 +6,11 @@
     <th><%= @item.class.human_attribute_name :target_db_id %></th>
     <td><%= @item.target_db.try(:title) %></td>
   </tr>
-  <tr>
-    <th><%= @item.class.human_attribute_name :target_field_id %></th>
-    <td><%= @item.target_field.try(:title) %></td>
-  </tr>
+    <%- @item.target_fields.each do |target_field| -%>
+    <tr>
+      <th><%= @item.class.human_attribute_name :target_field_id %></th>
+      <td><%= target_field.try(:title) %></td>
+    </tr>
+    <%- end -%>
 </table>
 <%- end -%>

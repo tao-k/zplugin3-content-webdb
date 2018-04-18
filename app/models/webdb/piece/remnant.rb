@@ -23,14 +23,14 @@ class Webdb::Piece::Remnant < Cms::Piece
     target_dbs.map {|g| [g.title, g.id] }
   end
 
-  def target_field_id
-    setting_value(:target_field_id).to_i
+  def target_field_ids
+    setting_value(:target_field_ids).present? ? setting_value(:target_field_ids).split(/\s/) : []
   end
 
-  def target_field
-    return nil if target_db.blank?
-    return nil if target_field_id.blank?
-    target_db.items.where(id: target_field_id).first
+  def target_fields
+    return [] if target_db.blank?
+    return [] if target_field_ids.blank?
+    target_db.items.where(id: target_field_ids)
   end
 
   def target_fields_for_option
