@@ -44,6 +44,23 @@ class Webdb::EntriesFinder < ApplicationFinder
             .where(date_arel_table[:event_date].eq(date))
             .where(date_arel_table[:option_value].eq(value[:option]))
         end
+      when 'office_hours'
+        weekday = value[:week]
+        hour    = value[:hour]
+        weekday_index = Webdb::Entry::WEEKDAY_OPTIONS.index(weekday)
+        next if weekday_index.blank? || hour.blank?
+        am_open_key = "item_values -> '#{item.name}' -> 'open' ->> '#{weekday_index}'"
+        am_close_key = "item_values -> '#{item.name}' -> 'close' ->> '#{weekday_index}'"
+        pm_open_key = "item_values -> '#{item.name}' -> 'open2' ->> '#{weekday_index}'"
+        pm_close_key = "item_values -> '#{item.name}' -> 'close2' ->> '#{weekday_index}'"
+        time_key  = "#{hour.to_i}:00"
+        @entries =  @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
+        qs = [
+          "(#{am_open_key} != '' AND #{am_close_key} != '' AND (#{am_open_key})::time <= :key::time AND (#{am_close_key})::time >= :key::time)",
+          "(#{pm_open_key} != '' AND #{pm_close_key} != '' AND (#{pm_open_key})::time <= :key::time AND (#{pm_close_key})::time >= :key::time)"
+        ]
+
+        @entries =  @entries.where(qs.join("OR"), key: time_key)
       else
         if value.kind_of?(Array)
           @entries = @entries.where("item_values ->> '#{item.name}' IN(:keys)", keys: value)

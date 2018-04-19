@@ -18,7 +18,7 @@ class Webdb::Entry::Csv < Webdb::Csv
 
     date_idx = 0
     db.items.each_with_index do |item, n|
-      if row[item.title].blank?
+      if row[item.title].blank? && item.item_type != 'office_hours'
         json_attributes[item.name] = nil
         next
       end
@@ -43,18 +43,19 @@ class Webdb::Entry::Csv < Webdb::Csv
         json_attributes[item.name] = {}
         json_attributes[item.name]['open'] = {}
         json_attributes[item.name]['close'] = {}
-        row[item.title].split(/／/).each do |d|
-          week = d.gsub(/(.*)：(.*)/, '\1')
-          opt = d.gsub(/(.*)：(.*)/, '\2')
-          idx = entry.class::WEEKDAY_OPTIONS.index(week)
-          if idx.present?
-            hours = opt.split(/～/)
-            json_attributes[item.name]['open'][idx.to_s]  = hours[0]
-            json_attributes[item.name]['close'][idx.to_s] = hours[1]
-          else
-            json_attributes[item.name]['remark'] = opt
-          end
+        json_attributes[item.name]['open2'] = {}
+        json_attributes[item.name]['close2'] = {}
+        Rails.logger.debug "****"
+        8.times do |idx|
+          w = Webdb::Entry::WEEKDAY_OPTIONS[idx]
+          Rails.logger.debug "#{item.title} - #{w} - 午前 - 開始"
+          Rails.logger.debug row["#{item.title} - #{w} - 午前 - 開始"]
+          json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title} - #{w} - 午前 - 開始"]
+          json_attributes[item.name]['close'][idx.to_s]  = row["#{item.title} - #{w} - 午前 - 終了"]
+          json_attributes[item.name]['open2'][idx.to_s]  = row["#{item.title} - #{w} - 午後 - 開始"]
+          json_attributes[item.name]['close2'][idx.to_s]  = row["#{item.title} - #{w} - 午後 - 終了"]
         end
+        json_attributes[item.name]['remark'] = row["#{item.title} - 備考"]
       when 'blank_weekday'
         json_attributes[item.name] = {}
         json_attributes[item.name]['weekday']= {}

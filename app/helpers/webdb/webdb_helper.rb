@@ -163,12 +163,16 @@ module Webdb::WebdbHelper
         tags = []
         8.times do |i|
           w = entry.class::WEEKDAY_OPTIONS[i]
-          open_at = entry.item_values.dig(item.name, 'open', i.to_s)
-          close_at = entry.item_values.dig(item.name, 'close', i.to_s)
-          next if open_at.blank? && close_at.blank?
+          open_at_am = entry.item_values.dig(item.name, 'open', i.to_s)
+          close_at_am = entry.item_values.dig(item.name, 'close', i.to_s)
+          open_at_pm = entry.item_values.dig(item.name, 'open2', i.to_s)
+          close_at_pm = entry.item_values.dig(item.name, 'close2', i.to_s)
           tags << content_tag(:tr) do
             concat content_tag(:th, w)
-            concat content_tag(:td, "#{open_at}　～　#{close_at}")
+            concat content_tag(:th, "午前")
+            concat content_tag(:td, "#{open_at_am}　～　#{close_at_am}")
+            concat content_tag(:th, "午後")
+            concat content_tag(:td, "#{open_at_pm}　～　#{close_at_pm}")
           end
         end
         safe_join tags
@@ -177,7 +181,7 @@ module Webdb::WebdbHelper
         rbody = content_tag(:tbody) do
           content_tag(:tr, class: "text-center") do
             concat content_tag(:th, "備考")
-            concat content_tag(:td, entry.item_values.dig(item.name, 'remark'))
+            concat content_tag(:td, entry.item_values.dig(item.name, 'remark'), colspan: 4)
           end
         end
       else

@@ -8,6 +8,20 @@ class Webdb::Entry < ApplicationRecord
   include Zplugin3::Content::Webdb::Model::Rel::TargetDate
 
   STATE_OPTIONS = [['公開', 'public'], ['下書き', 'draft']]
+  AMPM_OPTIONS  = [['午前', '1'], ['午後', '2']]
+
+  TIME_OPTIONS  = ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
+      "7:00", "8:00", "9:00","10:00", "11:00", "12:00", "13:00",
+      "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
+      "21:00", "22:00", "23:00"]
+
+   TARGET_TIME_OPTIONS = [["0時", 0], ["1時", 1], ["2時", 2], ["3時", 3], ["4時", 4],
+                         ["5時", 5], ["6時", 6], ["7時", 7], ["8時", 8], ["9時", 9],
+                         ["10時", 10], ["11時", 11], ["12時", 12], ["13時", 13],
+                         ["14時", 14], ["15時", 15], ["16時", 16], ["17時", 17],
+                         ["18時", 18], ["19時", 19], ["20時", 20], ["21時", 21],
+                         ["22時", 22], ["23時", 23]]
+
   enum_ish :state, [:public, :draft], predicate: true
 
   WEEKDAY_OPTIONS = ['日', '月', '火', '水', '木', '金', '土','祝']
@@ -152,7 +166,14 @@ class Webdb::Entry < ApplicationRecord
             item_values[item.name]['open'].each{|key, val|
               open_at  = val
               close_at = item_values[item.name]['close'].present? ? item_values[item.name]['close'][key] : nil
-              office_hours << "#{self.class::WEEKDAY_OPTIONS[key.to_i]}：#{open_at}～#{close_at}"
+              office_hours << "午前　#{self.class::WEEKDAY_OPTIONS[key.to_i]}：#{open_at}～#{close_at}"
+            }
+          end
+          if item_values[item.name]['open2']
+            item_values[item.name]['open2'].each{|key, val|
+              open_at  = val
+              close_at = item_values[item.name]['close2'].present? ? item_values[item.name]['close2'][key] : nil
+              office_hours << "午後　#{self.class::WEEKDAY_OPTIONS[key.to_i]}：#{open_at}～#{close_at}"
             }
           end
           value = "　#{office_hours.join('／')}"

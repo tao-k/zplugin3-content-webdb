@@ -81,10 +81,24 @@
           <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
             <div>
             <label><%= w %></label>
-            <%= text_field_tag "item[item_values][#{item.name}][open][#{i}]",
-              item_values.dig(item.name, 'open') ? item_values[item.name]['open'][i.to_s] : nil %>～
-              <%= text_field_tag "item[item_values][#{item.name}][close][#{i}]",
-              item_values.dig(item.name, 'close') ? item_values[item.name]['close'][i.to_s] : nil %>
+            <label>午前</label>
+            <%= select_tag "item[item_values][#{item.name}][open][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS,
+              item_values.dig(item.name, 'open') ? item_values[item.name]['open'][i.to_s] : nil),
+              include_blank: true %>～
+            <%= select_tag "item[item_values][#{item.name}][close][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS,
+              item_values.dig(item.name, 'close') ? item_values[item.name]['close'][i.to_s] : nil),
+              include_blank: true %>
+            <label>午後</label>
+            <%= select_tag "item[item_values][#{item.name}][open2][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS,
+              item_values.dig(item.name, 'open2') ? item_values[item.name]['open2'][i.to_s] : nil),
+              include_blank: true %>～
+            <%= select_tag "item[item_values][#{item.name}][close2][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS,
+              item_values.dig(item.name, 'close2') ? item_values[item.name]['close2'][i.to_s] : nil),
+              include_blank: true %>
             </div>
           <%- } -%>
           <div>
