@@ -109,16 +109,16 @@
             <div id="eventField<%= item.id %>">
             <% if @item.dates.present?
                @item.dates.where(name: item.name).each_with_index do |event, i| %>
-               <div class="dateList" style="word-spacing: -1em;">
+               <div class="dateList">
                  <span><%= event.event_date.try(:strftime, '%Y-%m-%d') %></span>
                  <span><%= event.option_value %></span>
                  <%= link_to "×", "#", id: "delete#{event.id}" ,class: "deleteDate"%>
                </div>
                <% end %>
             <% end %>
-              <div class="dateForm" style="word-spacing: -1em;">
-              <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , nil, class: 'datepicker' -%>
-              <%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
+              <div class="dateForm">
+              <%= text_field_tag "item[in_target_dates][#{@date_idx}][event_date]" , nil, class: 'datepicker' -%><!--
+              ---><%= select_tag "item[in_target_dates][#{@date_idx}][option_value]",
                              options_for_select(item.item_options_for_select, nil),
                              include_blank: true, class: 'selectMark' -%>
               <%= hidden_field_tag "item[in_target_dates][#{@date_idx}][name]" , item.name, class: 'selectName'-%>
