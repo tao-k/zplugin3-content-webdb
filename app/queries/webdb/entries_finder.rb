@@ -47,13 +47,14 @@ class Webdb::EntriesFinder < ApplicationFinder
       when 'office_hours'
         weekday = value[:week]
         hour    = value[:hour]
+        min     = value[:min]
         weekday_index = Webdb::Entry::WEEKDAY_OPTIONS.index(weekday)
-        next if weekday_index.blank? || hour.blank?
+        next if weekday_index.blank? || hour.blank? || min.blank?
         am_open_key = "item_values -> '#{item.name}' -> 'open' ->> '#{weekday_index}'"
         am_close_key = "item_values -> '#{item.name}' -> 'close' ->> '#{weekday_index}'"
         pm_open_key = "item_values -> '#{item.name}' -> 'open2' ->> '#{weekday_index}'"
         pm_close_key = "item_values -> '#{item.name}' -> 'close2' ->> '#{weekday_index}'"
-        time_key  = "#{hour.to_i}:00"
+        time_key  = "#{hour.to_i}:#{format("%02d", min.to_i)}"
         @entries =  @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
         qs = [
           "(#{am_open_key} != '' AND #{am_close_key} != '' AND (#{am_open_key})::time <= :key::time AND (#{am_close_key})::time >= :key::time)",

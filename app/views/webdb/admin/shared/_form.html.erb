@@ -82,22 +82,36 @@
             <div>
             <label><%= w %></label>
             <label>午前</label>
-            <%= select_tag "item[item_values][#{item.name}][open][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS,
-              item_values.dig(item.name, 'open') ? item_values[item.name]['open'][i.to_s] : nil),
+            <%
+              open_am = item_values.dig(item.name, 'open').present? ? item_values[item.name]['open'][i.to_s] : ""
+              close_am = item_values.dig(item.name, 'close').present? ? item_values[item.name]['close'][i.to_s] : ""
+              open_pm = item_values.dig(item.name, 'open2').present? ? item_values[item.name]['open2'][i.to_s] : ""
+              close_pm = item_values.dig(item.name, 'close2').present? ? item_values[item.name]['close2'][i.to_s] : ""
+            %>
+            <%= select_tag "item[item_values][#{item.name}][am_open_hour][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS, open_am.split(/:/)[0]),
+              include_blank: true %>：
+               <%= select_tag "item[item_values][#{item.name}][am_open_min][#{i}]",
+              options_for_select(@item.class::MINUTE_OPTIONS, open_am.split(/:/)[1]),
               include_blank: true %>～
-            <%= select_tag "item[item_values][#{item.name}][close][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS,
-              item_values.dig(item.name, 'close') ? item_values[item.name]['close'][i.to_s] : nil),
+            <%= select_tag "item[item_values][#{item.name}][am_close_hour][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS, close_am.split(/:/)[0]),
+              include_blank: true %>：
+               <%= select_tag "item[item_values][#{item.name}][am_close_min][#{i}]",
+              options_for_select(@item.class::MINUTE_OPTIONS, close_am.split(/:/)[1]),
               include_blank: true %>
             <label>午後</label>
-            <%= select_tag "item[item_values][#{item.name}][open2][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS,
-              item_values.dig(item.name, 'open2') ? item_values[item.name]['open2'][i.to_s] : nil),
+            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS, open_pm.split(/:/)[0]),
+              include_blank: true %>：
+               <%= select_tag "item[item_values][#{item.name}][pm_open_min][#{i}]",
+              options_for_select(@item.class::MINUTE_OPTIONS, open_pm.split(/:/)[1]),
               include_blank: true %>～
-            <%= select_tag "item[item_values][#{item.name}][close2][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS,
-              item_values.dig(item.name, 'close2') ? item_values[item.name]['close2'][i.to_s] : nil),
+            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][#{i}]",
+              options_for_select(@item.class::TIME_OPTIONS, close_pm.split(/:/)[0]),
+              include_blank: true %>：
+               <%= select_tag "item[item_values][#{item.name}][pm_close_min][#{i}]",
+              options_for_select(@item.class::MINUTE_OPTIONS, close_pm.split(/:/)[1]),
               include_blank: true %>
             </div>
           <%- } -%>

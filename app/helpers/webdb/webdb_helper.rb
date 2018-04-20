@@ -167,12 +167,13 @@ module Webdb::WebdbHelper
           close_at_am = entry.item_values.dig(item.name, 'close', i.to_s)
           open_at_pm = entry.item_values.dig(item.name, 'open2', i.to_s)
           close_at_pm = entry.item_values.dig(item.name, 'close2', i.to_s)
+          next if open_at_am.blank? && close_at_am.blank? && open_at_pm.blank? && close_at_pm.blank?
           tags << content_tag(:tr) do
             concat content_tag(:th, w)
             concat content_tag(:th, "午前")
-            concat content_tag(:td, "#{open_at_am}　～　#{close_at_am}")
+            concat content_tag(:td, (open_at_am.present? || close_at_am.present? ? "#{open_at_am}　～　#{close_at_am}" : ""))
             concat content_tag(:th, "午後")
-            concat content_tag(:td, "#{open_at_pm}　～　#{close_at_pm}")
+            concat content_tag(:td, (open_at_pm.present? || close_at_pm.present? ? "#{open_at_pm}　～　#{close_at_pm}" : ""))
           end
         end
         safe_join tags

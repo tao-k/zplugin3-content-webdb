@@ -10,10 +10,11 @@ class Webdb::Entry < ApplicationRecord
   STATE_OPTIONS = [['公開', 'public'], ['下書き', 'draft']]
   AMPM_OPTIONS  = [['午前', '1'], ['午後', '2']]
 
-  TIME_OPTIONS  = ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
-      "7:00", "8:00", "9:00","10:00", "11:00", "12:00", "13:00",
-      "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
-      "21:00", "22:00", "23:00"]
+  TIME_OPTIONS  = ["0", "1", "2", "3", "4", "5", "6",
+      "7", "8", "9","10", "11", "12", "13",
+      "14", "15", "16", "17", "18", "19", "20",
+      "21", "22", "23"]
+  MINUTE_OPTIONS = ["00", "30"]
 
    TARGET_TIME_OPTIONS = [["0時", 0], ["1時", 1], ["2時", 2], ["3時", 3], ["4時", 4],
                          ["5時", 5], ["6時", 6], ["7時", 7], ["8時", 8], ["9時", 9],
@@ -161,24 +162,37 @@ class Webdb::Entry < ApplicationRecord
         end
       when 'office_hours'
         if item_values[item.name]
-          office_hours = []
-          if item_values[item.name]['open']
-            item_values[item.name]['open'].each{|key, val|
-              open_at  = val
-              close_at = item_values[item.name]['close'].present? ? item_values[item.name]['close'][key] : nil
-              office_hours << "午前　#{self.class::WEEKDAY_OPTIONS[key.to_i]}：#{open_at}～#{close_at}"
-            }
-          end
-          if item_values[item.name]['open2']
-            item_values[item.name]['open2'].each{|key, val|
-              open_at  = val
-              close_at = item_values[item.name]['close2'].present? ? item_values[item.name]['close2'][key] : nil
-              office_hours << "午後　#{self.class::WEEKDAY_OPTIONS[key.to_i]}：#{open_at}～#{close_at}"
-            }
-          end
-          value = "　#{office_hours.join('／')}"
-          value += "／備考：#{item_values[item.name]['remark']}"
-          item_values[item.name]['text'] = value
+          next if item_values.dig(item.name, 'open').present?
+          item_values[item.name]['open'] = {}
+          item_values[item.name]['close'] = {}
+          item_values[item.name]['open2'] = {}
+          item_values[item.name]['close2'] = {}
+          WEEKDAY_OPTIONS.each_with_index{|w, i|
+            if item_values.dig(item.name, 'am_open_hour', i.to_s).present? &&  item_values.dig(item.name, 'am_open_min', i.to_s).present?
+              am_open  = "#{item_values.dig(item.name, 'am_open_hour', i.to_s)}:#{item_values.dig(item.name, 'am_open_min', i.to_s)}"
+              item_values[item.name]['open'][i.to_s] = am_open
+            end
+            if item_values.dig(item.name, 'am_close_hour', i.to_s).present? &&  item_values.dig(item.name, 'am_close_min', i.to_s).present?
+              am_close  = "#{item_values.dig(item.name, 'am_close_hour', i.to_s)}:#{item_values.dig(item.name, 'am_close_min', i.to_s)}"
+              item_values[item.name]['close'][i.to_s] = am_close
+            end
+            if item_values.dig(item.name, 'pm_open_hour', i.to_s).present? &&  item_values.dig(item.name, 'pm_open_min', i.to_s).present?
+              pm_open  = "#{item_values.dig(item.name, 'pm_open_hour', i.to_s)}:#{item_values.dig(item.name, 'pm_open_min', i.to_s)}"
+              item_values[item.name]['open2'][i.to_s] = pm_open
+            end
+            if item_values.dig(item.name, 'pm_close_hour', i.to_s).present? &&  item_values.dig(item.name, 'pm_close_min', i.to_s).present?
+              pm_close  = "#{item_values.dig(item.name, 'pm_close_hour', i.to_s)}:#{item_values.dig(item.name, 'pm_close_min', i.to_s)}"
+              item_values[item.name]['close2'][i.to_s] = pm_close
+            end
+          }
+          item_values[item.name].delete('am_open_hour')
+          item_values[item.name].delete('am_open_min')
+          item_values[item.name].delete('am_close_hour')
+          item_values[item.name].delete('am_close_min')
+          item_values[item.name].delete('pm_open_hour')
+          item_values[item.name].delete('pm_open_min')
+          item_values[item.name].delete('pm_close_hour')
+          item_values[item.name].delete('pm_close_min')
         end
       when 'blank_weekday'
         if item_values.dig(item.name, 'weekday')
