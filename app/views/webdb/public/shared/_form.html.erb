@@ -48,13 +48,7 @@
         <%- end -%>
       <%- when 'office_hours' -%>
         <li>
-        <%= select_tag "criteria[#{item.name}][week]",
-                       options_for_select(Webdb::Entry::WEEKDAY_OPTIONS, nil),
-                       style: item.style_attribute,
-                       include_blank: true %>
-
-        </li>
-        <li>
+          <%= text_field_tag "criteria[#{item.name}][date]", nil, class: 'datepicker' %>
         <%= select_tag "criteria[#{item.name}][hour]",
                        options_for_select(Webdb::Entry::TIME_OPTIONS, nil),
                        style: item.style_attribute,
