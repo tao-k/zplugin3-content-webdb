@@ -13,12 +13,17 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes['id']    = row['ID']
     entry_attributes['title'] = row['タイトル']
     entry_attributes['state'] = state_to_status(entry, row['状態'])
+    if row['編集許可ログイン'] && db.editor_content.present?
+      editor = db.editor_content.users.find_by(account: row['編集許可ログイン'])
+      entry_attributes['editor_id'] = editor.id if editor.present?
+    end
+
     json_attributes = {}
     in_target_dates = {}
 
     date_idx = 0
     db.items.each_with_index do |item, n|
-      if row[item.title].blank?
+      if row[item.title].blank? && item.item_type != 'office_hours'
         json_attributes[item.name] = nil
         next
       end
@@ -43,18 +48,19 @@ class Webdb::Entry::Csv < Webdb::Csv
         json_attributes[item.name] = {}
         json_attributes[item.name]['open'] = {}
         json_attributes[item.name]['close'] = {}
-        row[item.title].split(/／/).each do |d|
-          week = d.gsub(/(.*)：(.*)/, '\1')
-          opt = d.gsub(/(.*)：(.*)/, '\2')
-          idx = entry.class::WEEKDAY_OPTIONS.index(week)
-          if idx.present?
-            hours = opt.split(/～/)
-            json_attributes[item.name]['open'][idx.to_s]  = hours[0]
-            json_attributes[item.name]['close'][idx.to_s] = hours[1]
-          else
-            json_attributes[item.name]['remark'] = opt
-          end
+        json_attributes[item.name]['open2'] = {}
+        json_attributes[item.name]['close2'] = {}
+        Rails.logger.debug "****"
+        8.times do |idx|
+          w = Webdb::Entry::WEEKDAY_OPTIONS[idx]
+          Rails.logger.debug "#{item.title}_#{w}_午前_開始"
+          Rails.logger.debug row["#{item.title}_#{w}_午前_開始"]
+          json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title}_#{w}_午前_開始"]
+          json_attributes[item.name]['close'][idx.to_s]  = row["#{item.title}_#{w}_午前_終了"]
+          json_attributes[item.name]['open2'][idx.to_s]  = row["#{item.title}_#{w}_午後_開始"]
+          json_attributes[item.name]['close2'][idx.to_s]  = row["#{item.title}_#{w}_午後_終了"]
         end
+        json_attributes[item.name]['remark'] = row["#{item.title}_備考"]
       when 'blank_weekday'
         json_attributes[item.name] = {}
         json_attributes[item.name]['weekday']= {}
@@ -128,7 +134,11 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes = line.csv_data_attributes['entry_attributes']
     date_attributes  = line.csv_data_attributes['date_attributes']
     maps_attributes  = line.csv_data_attributes['maps_attributes']
-    entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
+    target_item = db.entries.where(id: entry_attributes['id'])
+    if !Core.user.has_auth?(:manager)
+      target_item = target_item.organized_into(Core.user_group.id)
+    end
+    entry = target_item.first || db.entries.new
     entry.state = entry_attributes['state']
     if json_value = entry_attributes['json_values']
       item_values = entry.item_values.presence || {}

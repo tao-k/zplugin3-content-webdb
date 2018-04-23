@@ -10,6 +10,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
 
   def index
     @items = @db.entries
+    @items = @items.organized_into(Core.user_group.id) if !Core.user.has_auth?(:manager)
     if params[:csv]
       return export_csv(@items)
     else
@@ -84,6 +85,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
 
   def entry_params
     params.require(:item).permit(:title, :editor_id, :item_values, :in_target_date,
+      :creator_attributes => [:id, :group_id, :user_id],
       :maps_attributes => [:id, :name, :title, :map_lat, :map_lng, :map_zoom,
       :markers_attributes => [:id, :name, :lat, :lng]]).tap do |whitelisted|
       whitelisted[:item_values] = params[:item][:item_values].permit! if params[:item][:item_values]
@@ -96,23 +98,48 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     db_items = @db.items.public_state
     bom = %w(EF BB BF).map { |e| e.hex.chr }.join
     data = CSV.generate(bom, force_quotes: true) do |csv|
-      columns = [ "ID", "状態" ] + db_items.pluck(:title)
-      columns += ["緯度", "経度"]
+      columns = [ "ID", "状態" ]
+      db_items.each do |item|
+        case item.item_type
+        when 'office_hours'
+          8.times do |i|
+            w = Webdb::Entry::WEEKDAY_OPTIONS[i]
+            columns << "#{item.title}_#{w}_午前_開始"
+            columns << "#{item.title}_#{w}_午前_終了"
+            columns << "#{item.title}_#{w}_午後_開始"
+            columns << "#{item.title}_#{w}_午後_終了"
+          end
+          columns << "#{item.title}_備考"
+        else
+          columns << item.title
+        end
+      end
+      columns += ["緯度", "経度", "編集許可ログイン"]
       csv << columns
       entries.each do |entry|
         item_array = [entry.id, entry.state_text]
         files = entry.files
         db_items.each do |item|
-          value = entry.item_values[item.name]
           case item.item_type
-          when 'ampm', 'office_hours', 'blank_weekday', 'check_box', 'check_data'
-            value = entry.item_values[item.name].blank? ? nil : entry.item_values[item.name]['text']
+          when 'office_hours'
+            8.times do |i|
+              item_array << entry.item_values.dig(item.name, 'open', i.to_s)
+              item_array << entry.item_values.dig(item.name, 'close', i.to_s)
+              item_array << entry.item_values.dig(item.name, 'open2', i.to_s)
+              item_array << entry.item_values.dig(item.name, 'close2', i.to_s)
+            end
+            item_array << entry.item_values.dig(item.name, 'remark')
+          when 'ampm', 'blank_weekday', 'check_box', 'check_data'
+            item_array << entry.item_values.dig(item.name, 'text')
           when 'select_data', 'radio_data'
+            val = ""
             if select_data = item.item_options_for_select_data
               select_data.each{|e| value = e[0] if e[1]== entry.item_values[item.name].to_i }
             end
+            item_array << val
+          else
+            item_array << entry.item_values[item.name]
           end
-          item_array << value
         end
         latlng = []
         if map = entry.maps.first
@@ -120,6 +147,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
           item_array += [first_marker.lat, first_marker.lng] if first_marker
         end
         item_array += latlng
+        item_array << entry.editor_user.try(:account)
         csv << item_array
       end
     end

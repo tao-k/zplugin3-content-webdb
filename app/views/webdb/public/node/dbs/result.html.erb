@@ -14,7 +14,7 @@
           <%= hidden_field_tag "criteria[#{item.name}][#{key}][#{c_key}]", c%>
           <%- end -%>
         <%- end
-      when 'blank_date', 'blank_weekday'
+      when 'blank_date', 'blank_weekday', 'office_hours'
         param.each do |key, p| -%>
           <%= hidden_field_tag "criteria[#{item.name}][#{key}]", p%>
         <%- end

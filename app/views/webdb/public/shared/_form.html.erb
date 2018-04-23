@@ -46,6 +46,22 @@
             style: item.style_attribute, id: "criteria_#{item.name}_#{i}" %>
           <label for='<%="criteria_#{item.name}_#{i}"%>'><%= option[0] %></label>
         <%- end -%>
+      <%- when 'office_hours' -%>
+        <li>
+        <%= select_tag "criteria[#{item.name}][week]",
+                       options_for_select(Webdb::Entry::WEEKDAY_OPTIONS, nil),
+                       style: item.style_attribute,
+                       include_blank: true %>
+          <%= select_tag "criteria[#{item.name}][hour]",
+                       options_for_select(Webdb::Entry::TIME_OPTIONS, nil),
+                       style: item.style_attribute,
+                       include_blank: true %>：
+          <%= select_tag "criteria[#{item.name}][min]",
+                       options_for_select(Webdb::Entry::MINUTE_OPTIONS, nil),
+                       style: item.style_attribute,
+                       include_blank: true %>
+
+        </li>
       <%- when 'ampm' -%>
         <%- Webdb::Entry::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
           <li>

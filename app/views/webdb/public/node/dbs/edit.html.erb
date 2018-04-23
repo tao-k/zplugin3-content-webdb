@@ -1,12 +1,5 @@
 <div class="contentWebdb">
-<link rel="stylesheet" media="screen" href="/_common/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
-<script src="/_common/js/jquery-ui.min.js"></script>
-<link rel="stylesheet" media="screen" href="/_common/css/jquery-ui-timepicker-addon.css" />
-<script src="/_common/js/jquery-ui-timepicker-addon.js"></script>
-<%= javascript_include_tag '/_common/js/jquery-ui-datepicker-ja.js' %>
-<%= javascript_include_tag '/_common/js/jquery-ui-timepicker-addon-ja.js' %>
-<script src="/_common/js/cms_admin/cms.js"></script>
-<%= form_for @item, as: :entry, url: @item.edit_uri, html: { method: :put } do |f| %>
+<%= form_for @item, as: :item, url: @item.edit_uri, html: { method: :put } do |f| %>
   <%= error_messages_for :entry %>
   <%= render 'form', f: f %>
   <%= submit_tag '保存' %>
