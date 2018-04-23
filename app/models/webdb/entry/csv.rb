@@ -13,6 +13,11 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes['id']    = row['ID']
     entry_attributes['title'] = row['タイトル']
     entry_attributes['state'] = state_to_status(entry, row['状態'])
+    if row['編集許可ログイン'] && db.editor_content.present?
+      editor = db.editor_content.users.find_by(account: row['編集許可ログイン'])
+      entry_attributes['editor_id'] = editor.id if editor.present?
+    end
+
     json_attributes = {}
     in_target_dates = {}
 
@@ -48,14 +53,14 @@ class Webdb::Entry::Csv < Webdb::Csv
         Rails.logger.debug "****"
         8.times do |idx|
           w = Webdb::Entry::WEEKDAY_OPTIONS[idx]
-          Rails.logger.debug "#{item.title} - #{w} - 午前 - 開始"
-          Rails.logger.debug row["#{item.title} - #{w} - 午前 - 開始"]
-          json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title} - #{w} - 午前 - 開始"]
-          json_attributes[item.name]['close'][idx.to_s]  = row["#{item.title} - #{w} - 午前 - 終了"]
-          json_attributes[item.name]['open2'][idx.to_s]  = row["#{item.title} - #{w} - 午後 - 開始"]
-          json_attributes[item.name]['close2'][idx.to_s]  = row["#{item.title} - #{w} - 午後 - 終了"]
+          Rails.logger.debug "#{item.title}_#{w}_午前_開始"
+          Rails.logger.debug row["#{item.title}_#{w}_午前_開始"]
+          json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title}_#{w}_午前_開始"]
+          json_attributes[item.name]['close'][idx.to_s]  = row["#{item.title}_#{w}_午前_終了"]
+          json_attributes[item.name]['open2'][idx.to_s]  = row["#{item.title}_#{w}_午後_開始"]
+          json_attributes[item.name]['close2'][idx.to_s]  = row["#{item.title}_#{w}_午後_終了"]
         end
-        json_attributes[item.name]['remark'] = row["#{item.title} - 備考"]
+        json_attributes[item.name]['remark'] = row["#{item.title}_備考"]
       when 'blank_weekday'
         json_attributes[item.name] = {}
         json_attributes[item.name]['weekday']= {}

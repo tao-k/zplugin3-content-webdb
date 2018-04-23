@@ -102,17 +102,17 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
         when 'office_hours'
           8.times do |i|
             w = Webdb::Entry::WEEKDAY_OPTIONS[i]
-            columns << "#{item.title} - #{w} - 午前 - 開始"
-            columns << "#{item.title} - #{w} - 午前 - 終了"
-            columns << "#{item.title} - #{w} - 午後 - 開始"
-            columns << "#{item.title} - #{w} - 午後 - 終了"
+            columns << "#{item.title}_#{w}_午前_開始"
+            columns << "#{item.title}_#{w}_午前_終了"
+            columns << "#{item.title}_#{w}_午後_開始"
+            columns << "#{item.title}_#{w}_午後_終了"
           end
-          columns << "#{item.title} - 備考"
+          columns << "#{item.title}_備考"
         else
           columns << item.title
         end
       end
-      columns += ["緯度", "経度"]
+      columns += ["緯度", "経度", "編集許可ログイン"]
       csv << columns
       entries.each do |entry|
         item_array = [entry.id, entry.state_text]
@@ -145,6 +145,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
           item_array += [first_marker.lat, first_marker.lng] if first_marker
         end
         item_array += latlng
+        item_array << entry.editor_user.try(:account)
         csv << item_array
       end
     end

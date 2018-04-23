@@ -16,12 +16,12 @@ class Webdb::Entry < ApplicationRecord
       "21", "22", "23"]
   MINUTE_OPTIONS = ["00", "30"]
 
-   TARGET_TIME_OPTIONS = [["0時", 0], ["1時", 1], ["2時", 2], ["3時", 3], ["4時", 4],
-                         ["5時", 5], ["6時", 6], ["7時", 7], ["8時", 8], ["9時", 9],
-                         ["10時", 10], ["11時", 11], ["12時", 12], ["13時", 13],
-                         ["14時", 14], ["15時", 15], ["16時", 16], ["17時", 17],
-                         ["18時", 18], ["19時", 19], ["20時", 20], ["21時", 21],
-                         ["22時", 22], ["23時", 23]]
+  TARGET_TIME_OPTIONS = [["0時", 0], ["1時", 1], ["2時", 2], ["3時", 3], ["4時", 4],
+                        ["5時", 5], ["6時", 6], ["7時", 7], ["8時", 8], ["9時", 9],
+                        ["10時", 10], ["11時", 11], ["12時", 12], ["13時", 13],
+                        ["14時", 14], ["15時", 15], ["16時", 16], ["17時", 17],
+                        ["18時", 18], ["19時", 19], ["20時", 20], ["21時", 21],
+                        ["22時", 22], ["23時", 23]]
 
   enum_ish :state, [:public, :draft], predicate: true
 
@@ -167,21 +167,23 @@ class Webdb::Entry < ApplicationRecord
           item_values[item.name]['close'] = {}
           item_values[item.name]['open2'] = {}
           item_values[item.name]['close2'] = {}
-          WEEKDAY_OPTIONS.each_with_index{|w, i|
-            if item_values.dig(item.name, 'am_open_hour', i.to_s).present? &&  item_values.dig(item.name, 'am_open_min', i.to_s).present?
-              am_open  = "#{item_values.dig(item.name, 'am_open_hour', i.to_s)}:#{item_values.dig(item.name, 'am_open_min', i.to_s)}"
+          WEEKDAY_OPTIONS.each_with_index{|w, n|
+            i = item_values[item.name]['week'].index(w)
+            next if i.blank?
+            if item_values.dig(item.name, 'am_open_hour').present? &&  item_values.dig(item.name, 'am_open_min')[i].present?
+              am_open  = "#{item_values.dig(item.name, 'am_open_hour')[i]}:#{item_values.dig(item.name, 'am_open_min')[i]}"
               item_values[item.name]['open'][i.to_s] = am_open
             end
-            if item_values.dig(item.name, 'am_close_hour', i.to_s).present? &&  item_values.dig(item.name, 'am_close_min', i.to_s).present?
-              am_close  = "#{item_values.dig(item.name, 'am_close_hour', i.to_s)}:#{item_values.dig(item.name, 'am_close_min', i.to_s)}"
+            if item_values.dig(item.name, 'am_close_hour').present? &&  item_values.dig(item.name, 'am_close_min')[i].present?
+              am_close  = "#{item_values.dig(item.name, 'am_close_hour')[i]}:#{item_values.dig(item.name, 'am_close_min')[i]}"
               item_values[item.name]['close'][i.to_s] = am_close
             end
-            if item_values.dig(item.name, 'pm_open_hour', i.to_s).present? &&  item_values.dig(item.name, 'pm_open_min', i.to_s).present?
-              pm_open  = "#{item_values.dig(item.name, 'pm_open_hour', i.to_s)}:#{item_values.dig(item.name, 'pm_open_min', i.to_s)}"
+            if item_values.dig(item.name, 'pm_open_hour').present? &&  item_values.dig(item.name, 'pm_open_min')[i].present?
+              pm_open  = "#{item_values.dig(item.name, 'pm_open_hour')[i]}:#{item_values.dig(item.name, 'pm_open_min')[i]}"
               item_values[item.name]['open2'][i.to_s] = pm_open
             end
-            if item_values.dig(item.name, 'pm_close_hour', i.to_s).present? &&  item_values.dig(item.name, 'pm_close_min', i.to_s).present?
-              pm_close  = "#{item_values.dig(item.name, 'pm_close_hour', i.to_s)}:#{item_values.dig(item.name, 'pm_close_min', i.to_s)}"
+            if item_values.dig(item.name, 'pm_close_hour').present? &&  item_values.dig(item.name, 'pm_close_min')[i].present?
+              pm_close  = "#{item_values.dig(item.name, 'pm_close_hour')[i]}:#{item_values.dig(item.name, 'pm_close_min')[i]}"
               item_values[item.name]['close2'][i.to_s] = pm_close
             end
           }

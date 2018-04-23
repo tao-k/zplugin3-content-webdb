@@ -45,11 +45,11 @@ class Webdb::EntriesFinder < ApplicationFinder
             .where(date_arel_table[:option_value].eq(value[:option]))
         end
       when 'office_hours'
-        date    = Date.parse(value[:date]) rescue nil
+        weekday = value[:week]
         hour    = value[:hour]
         min     = value[:min]
-        next if date.blank? || hour.blank? || min.blank?
-        weekday_index = date.wday
+        weekday_index = Webdb::Entry::WEEKDAY_OPTIONS.index(weekday)
+        next if weekday_index.blank? || hour.blank? || min.blank?
         am_open_key = "item_values -> '#{item.name}' -> 'open' ->> '#{weekday_index}'"
         am_close_key = "item_values -> '#{item.name}' -> 'close' ->> '#{weekday_index}'"
         pm_open_key = "item_values -> '#{item.name}' -> 'open2' ->> '#{weekday_index}'"

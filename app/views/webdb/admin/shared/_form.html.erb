@@ -77,45 +77,86 @@
           <%- } -%>
         </div>
         <%- when 'office_hours' -%>
-          <div>営業時間</div>
-          <%- @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i| -%>
-            <div>
-            <label><%= w %></label>
-            <label>午前</label>
-            <%
+          <div id="office_hours_<%=item.id%>">
+          <%-
+              @item.class::WEEKDAY_OPTIONS.each_with_index{|w, i|
               open_am = item_values.dig(item.name, 'open').present? ? item_values[item.name]['open'][i.to_s] : ""
               close_am = item_values.dig(item.name, 'close').present? ? item_values[item.name]['close'][i.to_s] : ""
               open_pm = item_values.dig(item.name, 'open2').present? ? item_values[item.name]['open2'][i.to_s] : ""
               close_pm = item_values.dig(item.name, 'close2').present? ? item_values[item.name]['close2'][i.to_s] : ""
-            %>
-            <%= select_tag "item[item_values][#{item.name}][am_open_hour][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS, open_am.split(/:/)[0]),
-              include_blank: true %>：
-               <%= select_tag "item[item_values][#{item.name}][am_open_min][#{i}]",
-              options_for_select(@item.class::MINUTE_OPTIONS, open_am.split(/:/)[1]),
-              include_blank: true %>～
-            <%= select_tag "item[item_values][#{item.name}][am_close_hour][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS, close_am.split(/:/)[0]),
-              include_blank: true %>：
-               <%= select_tag "item[item_values][#{item.name}][am_close_min][#{i}]",
-              options_for_select(@item.class::MINUTE_OPTIONS, close_am.split(/:/)[1]),
-              include_blank: true %>
+              next if open_am.blank? && close_am.blank? && open_pm.blank? && close_pm.blank?
+           -%>
+            <div class="officeForm">
+            <%= select_tag "item[item_values][#{item.name}][week][]",
+               options_for_select(Webdb::Entry::WEEKDAY_OPTIONS, Webdb::Entry::WEEKDAY_OPTIONS[i]),
+               style: item.style_attribute,
+               include_blank: true %>
+            <label>午前</label>
+            <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, open_am.present? ? open_am.split(/:/)[0] : nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, open_am.present? ? open_am.split(/:/)[1] : nil),
+              include_blank: true %>分～
+            <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, close_am.present? ? close_am.split(/:/)[0] : nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, close_am.present? ? close_am.split(/:/)[1] : nil),
+              include_blank: true %>分
+            <span>　/　</span>
             <label>午後</label>
-            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS, open_pm.split(/:/)[0]),
-              include_blank: true %>：
-               <%= select_tag "item[item_values][#{item.name}][pm_open_min][#{i}]",
-              options_for_select(@item.class::MINUTE_OPTIONS, open_pm.split(/:/)[1]),
-              include_blank: true %>～
-            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][#{i}]",
-              options_for_select(@item.class::TIME_OPTIONS, close_pm.split(/:/)[0]),
-              include_blank: true %>：
-               <%= select_tag "item[item_values][#{item.name}][pm_close_min][#{i}]",
-              options_for_select(@item.class::MINUTE_OPTIONS, close_pm.split(/:/)[1]),
-              include_blank: true %>
+            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, open_pm.present? ? open_pm.split(/:/)[0] : nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, open_pm.present? ? open_pm.split(/:/)[1] : nil),
+              include_blank: true %>分～
+            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, close_pm.present? ? close_pm.split(/:/)[0] : nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, close_pm.present? ? close_pm.split(/:/)[1] : nil),
+              include_blank: true %>分
             </div>
           <%- } -%>
+            <div class="officeForm">
+            <%= select_tag "item[item_values][#{item.name}][week][]",
+               options_for_select(Webdb::Entry::WEEKDAY_OPTIONS, nil),
+               style: item.style_attribute,
+               include_blank: true %>
+            <label>午前</label>
+            <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, nil),
+              include_blank: true %>分～
+            <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, nil),
+              include_blank: true %>分
+            <span>　/　</span>
+            <label>午後</label>
+            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, nil),
+              include_blank: true %>分～
+            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
+              options_for_select(@item.class::TIME_OPTIONS, nil),
+              include_blank: true %>時
+               <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
+              options_for_select(@item.class::MINUTE_OPTIONS, nil),
+              include_blank: true %>分
+            </div>
+          </div>
           <div>
+            <a href="#" class="addOfficeHour" id="office<%= item.id %>">曜日を追加する</a>
+          </div>
           <div>備考</div>
             <%= text_area_tag "item[item_values][#{item.name}][remark]",
                 item_values[item.name] ? item_values[item.name]['remark'] : nil  %>
@@ -187,6 +228,14 @@ $(function() {
     $(this).parent().remove();
   });
   <% end %>
+
+  $('.addOfficeHour').click(function(e) {
+    var officeNumber = $(this).attr('id').replace(/office/, '');
+    $("#office_hours_" + officeNumber + "> div:last").clone(true).appendTo(
+      $("#office_hours_" + officeNumber)
+    );
+    return false;
+  });
 
   $('.addEvent').click(function(e) {
 
