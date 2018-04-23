@@ -43,6 +43,26 @@ class Webdb::Entry < ApplicationRecord
 
   scope :public_state, -> { where(state: 'public') }
 
+  scope :organized_into, ->(group_ids) {
+    joins(creator: :group).where(Sys::Group.arel_table[:id].in(group_ids))
+  }
+
+  def creatable?
+    return true if Core.user.has_priv?(:manager)
+    Core.user.has_priv?(:create, item: content.concept_id, site_id: content.site_id)
+  end
+
+
+  def editable?
+    return true if Core.user.has_priv?(:manager)
+    Core.user.has_priv?(:update, item: content.concept_id, site_id: content.site_id)
+  end
+
+  def deletable?
+    return true if Core.user.has_priv?(:manager)
+    Core.user.has_priv?(:delete, item: content.concept_id, site_id: content.site_id)
+  end
+
   def default_map_position
     content.default_map_position
   end

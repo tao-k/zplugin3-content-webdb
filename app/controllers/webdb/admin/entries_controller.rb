@@ -10,6 +10,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
 
   def index
     @items = @db.entries
+    @items = @items.organized_into(Core.user_group.id) if !Core.user.has_auth?(:manager)
     if params[:csv]
       return export_csv(@items)
     else
@@ -84,6 +85,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
 
   def entry_params
     params.require(:item).permit(:title, :editor_id, :item_values, :in_target_date,
+      :creator_attributes => [:id, :group_id, :user_id],
       :maps_attributes => [:id, :name, :title, :map_lat, :map_lng, :map_zoom,
       :markers_attributes => [:id, :name, :lat, :lng]]).tap do |whitelisted|
       whitelisted[:item_values] = params[:item][:item_values].permit! if params[:item][:item_values]
