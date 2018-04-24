@@ -7,12 +7,16 @@ class Webdb::Entry::Csv < Webdb::Csv
 
     entry = db.entries.where(id: row['ID']).first || db.entries.new
     entry_attributes = {}
+    delete_attributes = {}
+
     item_name = ""
     maps_attributes = []
     entry_attributes['db_id'] = db.id
     entry_attributes['id']    = row['ID']
     entry_attributes['title'] = row['タイトル']
     entry_attributes['state'] = state_to_status(entry, row['状態'])
+    delete_attributes['delete'] = row['削除']
+
     if row['編集許可ログイン'] && db.editor_content.present?
       editor = db.editor_content.users.find_by(account: row['編集許可ログイン'])
       entry_attributes['editor_id'] = editor.id if editor.present?
@@ -118,7 +122,8 @@ class Webdb::Entry::Csv < Webdb::Csv
     line.data_attributes = {
       entry_attributes: entry_attributes,
       date_attributes: in_target_dates,
-      maps_attributes: maps_attributes
+      maps_attributes: maps_attributes,
+      delete_attributes: delete_attributes
     }
     line.data_invalid = entry.errors.blank? ? 0 : 1
     line.data_errors = entry.errors.full_messages.to_a if entry.errors.present?
@@ -131,25 +136,30 @@ class Webdb::Entry::Csv < Webdb::Csv
   end
 
   def register(line)
-    entry_attributes = line.csv_data_attributes['entry_attributes']
-    date_attributes  = line.csv_data_attributes['date_attributes']
-    maps_attributes  = line.csv_data_attributes['maps_attributes']
+    entry_attributes  = line.csv_data_attributes['entry_attributes']
+    date_attributes   = line.csv_data_attributes['date_attributes']
+    maps_attributes   = line.csv_data_attributes['maps_attributes']
+    delete_attributes = line.csv_data_attributes['delete_attributes']
     entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
-    entry.state = entry_attributes['state']
-    if json_value = entry_attributes['json_values']
-      item_values = entry.item_values.presence || {}
-      json_value.each do |key , value|
-        item_values[key] = value
+    if entry_attributes['id'].present? && entry.present? &&  delete_attributes['delete'].present?
+      entry.destroy if delete_attributes['delete'] == '削除'
+    else
+      entry.state = entry_attributes['state']
+      if json_value = entry_attributes['json_values']
+        item_values = entry.item_values.presence || {}
+        json_value.each do |key , value|
+          item_values[key] = value
+        end
+        entry.item_values = item_values
       end
-      entry.item_values = item_values
+      entry_attributes.each do |key , value|
+        next if key == 'id' || key == 'json_values'
+        entry[key] = value
+      end
+      entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
+      entry.maps_attributes = maps_attributes if maps_attributes.present?
+      entry.save
     end
-    entry_attributes.each do |key , value|
-      next if key == 'id' || key == 'json_values'
-      entry[key] = value
-    end
-    entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
-    entry.maps_attributes = maps_attributes if maps_attributes.present?
-    entry.save
     entry
   end
 end
