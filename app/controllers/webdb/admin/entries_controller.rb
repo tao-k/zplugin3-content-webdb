@@ -97,7 +97,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     db_items = @db.items.public_state
     bom = %w(EF BB BF).map { |e| e.hex.chr }.join
     data = CSV.generate(bom, force_quotes: true) do |csv|
-      columns = [ "ID", "状態" ]
+      columns = [ "ID", "状態", "削除" ]
       db_items.each do |item|
         case item.item_type
         when 'office_hours'
@@ -116,7 +116,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
       columns += ["緯度", "経度", "編集許可ログイン"]
       csv << columns
       entries.each do |entry|
-        item_array = [entry.id, entry.state_text]
+        item_array = [entry.id, entry.state_text, nil]
         files = entry.files
         db_items.each do |item|
           case item.item_type

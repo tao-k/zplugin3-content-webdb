@@ -31,7 +31,8 @@ module Zplugin3::Content::Webdb::Model::Rel::TargetDate
       next if event_date.blank?
       option_value = in_target_date[:option_value] || nil
       item_name    = in_target_date[:name] || nil
-      event = self.dates.new
+      event = self.dates.where(Webdb::EntryDate.arel_table[:event_date].eq(event_date))
+        .where(name: item_name).first || self.dates.new
       event.entry_id      = id
       event.event_date    = event_date
       event.option_value  = option_value
