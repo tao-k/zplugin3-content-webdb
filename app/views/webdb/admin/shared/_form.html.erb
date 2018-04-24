@@ -94,30 +94,29 @@
             <label>午前</label>
             <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, open_am.present? ? open_am.split(/:/)[0] : nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, open_am.present? ? open_am.split(/:/)[1] : nil),
-              include_blank: true %>分～
+              include_blank: true %><span class="minute">分</span><span class="between">～</span>
             <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, close_am.present? ? close_am.split(/:/)[0] : nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, close_am.present? ? close_am.split(/:/)[1] : nil),
-              include_blank: true %>分
-            <span>　/　</span>
+              include_blank: true %><span class="minute">分</span><span class="separator">/</span>
             <label>午後</label>
             <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, open_pm.present? ? open_pm.split(/:/)[0] : nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, open_pm.present? ? open_pm.split(/:/)[1] : nil),
-              include_blank: true %>分～
+              include_blank: true %><span class="minute">分</span><span class="between">～</span>
             <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, close_pm.present? ? close_pm.split(/:/)[0] : nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, close_pm.present? ? close_pm.split(/:/)[1] : nil),
-              include_blank: true %>分
+              include_blank: true %><span class="minute">分</span>
             </div>
           <%- } -%>
             <div class="officeForm">
@@ -128,30 +127,29 @@
             <label>午前</label>
             <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %>分～
+              include_blank: true %><span class="minute">分</span><span class="between">～</span>
             <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %>分
-            <span>　/　</span>
+              include_blank: true %><span class="minute">分</span><span class="separator">/</span>
             <label>午後</label>
             <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %>分～
+              include_blank: true %><span class="minute">分</span><span class="between">～</span>
             <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
               options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %>時
+              include_blank: true %><span class="hour">時</span>
                <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
               options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %>分
+              include_blank: true %><span class="minute">分</span>
             </div>
           </div>
           <div>
