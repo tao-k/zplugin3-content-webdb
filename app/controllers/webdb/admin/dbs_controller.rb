@@ -19,7 +19,6 @@ class Webdb::Admin::DbsController < Cms::Controller::Admin::Base
 
   def show
     @item = @content.dbs.find(params[:id])
-    return error_auth unless @item.readable?
     _show @item
   end
 

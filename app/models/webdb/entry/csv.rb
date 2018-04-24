@@ -134,11 +134,7 @@ class Webdb::Entry::Csv < Webdb::Csv
     entry_attributes = line.csv_data_attributes['entry_attributes']
     date_attributes  = line.csv_data_attributes['date_attributes']
     maps_attributes  = line.csv_data_attributes['maps_attributes']
-    target_item = db.entries.where(id: entry_attributes['id'])
-    if !Core.user.has_auth?(:manager)
-      target_item = target_item.organized_into(Core.user_group.id)
-    end
-    entry = target_item.first || db.entries.new
+    entry = db.entries.where(id: entry_attributes['id']).first || db.entries.new
     entry.state = entry_attributes['state']
     if json_value = entry_attributes['json_values']
       item_values = entry.item_values.presence || {}
