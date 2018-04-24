@@ -1,5 +1,4 @@
 <%= init_ckeditor baseHref: "#{webdb_db_entries_path(content: @content, db_id: @db.id, id: @item.id.to_i)}/" %>
-<span class="note">※は必須項目です。</span>
 
 <%= render 'webdb/admin/shared/form', db: @item.db, item_values: @item.item_values, use_admin: true if @item.db %>
 
