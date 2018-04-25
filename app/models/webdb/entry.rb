@@ -192,19 +192,19 @@ class Webdb::Entry < ApplicationRecord
             next if i.blank?
             if item_values.dig(item.name, 'am_open_hour').present? &&  item_values.dig(item.name, 'am_open_min')[i].present?
               am_open  = "#{item_values.dig(item.name, 'am_open_hour')[i]}:#{item_values.dig(item.name, 'am_open_min')[i]}"
-              item_values[item.name]['open'][i.to_s] = am_open
+              item_values[item.name]['open'][n.to_s] = am_open
             end
             if item_values.dig(item.name, 'am_close_hour').present? &&  item_values.dig(item.name, 'am_close_min')[i].present?
               am_close  = "#{item_values.dig(item.name, 'am_close_hour')[i]}:#{item_values.dig(item.name, 'am_close_min')[i]}"
-              item_values[item.name]['close'][i.to_s] = am_close
+              item_values[item.name]['close'][n.to_s] = am_close
             end
             if item_values.dig(item.name, 'pm_open_hour').present? &&  item_values.dig(item.name, 'pm_open_min')[i].present?
               pm_open  = "#{item_values.dig(item.name, 'pm_open_hour')[i]}:#{item_values.dig(item.name, 'pm_open_min')[i]}"
-              item_values[item.name]['open2'][i.to_s] = pm_open
+              item_values[item.name]['open2'][n.to_s] = pm_open
             end
             if item_values.dig(item.name, 'pm_close_hour').present? &&  item_values.dig(item.name, 'pm_close_min')[i].present?
               pm_close  = "#{item_values.dig(item.name, 'pm_close_hour')[i]}:#{item_values.dig(item.name, 'pm_close_min')[i]}"
-              item_values[item.name]['close2'][i.to_s] = pm_close
+              item_values[item.name]['close2'][n.to_s] = pm_close
             end
           }
           item_values[item.name].delete('am_open_hour')
