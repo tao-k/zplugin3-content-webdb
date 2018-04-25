@@ -35,7 +35,7 @@ class Webdb::Entry::Csv < Webdb::Csv
       when 'check_box'
         json_attributes[item.name] = {}
         checks = []
-        row[item.title].split(/，/).each_with_index do |w, n|
+        row[item.title].split(/，/).each_with_index do |w, m|
           checks << w
         end
         json_attributes[item.name]['check'] = checks
@@ -57,8 +57,6 @@ class Webdb::Entry::Csv < Webdb::Csv
         Rails.logger.debug "****"
         8.times do |idx|
           w = Webdb::Entry::WEEKDAY_OPTIONS[idx]
-          Rails.logger.debug "#{item.title}_#{w}_午前_開始"
-          Rails.logger.debug row["#{item.title}_#{w}_午前_開始"]
           json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title}_#{w}_午前_開始"]
           json_attributes[item.name]['close'][idx.to_s]  = row["#{item.title}_#{w}_午前_終了"]
           json_attributes[item.name]['open2'][idx.to_s]  = row["#{item.title}_#{w}_午後_開始"]
