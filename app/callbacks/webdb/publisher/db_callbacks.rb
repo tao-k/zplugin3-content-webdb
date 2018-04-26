@@ -13,8 +13,7 @@ class Webdb::Publisher::DbCallbacks < PublisherCallbacks
   end
 
   def enqueue_pieces
-    pieces = @item.content.public_pieces
-    Cms::Publisher::PieceCallbacks.new.enqueue(pieces)
+    Cms::Publisher::PieceCallbacks.new.enqueue(@item.content.public_pieces)
   end
 
 end

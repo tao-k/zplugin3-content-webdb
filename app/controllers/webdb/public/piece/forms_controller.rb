@@ -1,11 +1,11 @@
 class Webdb::Public::Piece::FormsController < Sys::Controller::Public::Base
   def pre_dispatch
     @piece = Webdb::Piece::Form.find_by(id: Page.current_piece.id)
-    render plain: '' if @piece.nil?
+    return render plain: '' if @piece.blank?
     @content = @piece.content
     @db      = @piece.target_db
     @node    = @content.public_node
-    render plain: '' if @db.nil?
+    return render plain: '' if @db.blank?
   end
 
   def index

@@ -5,7 +5,7 @@ class Webdb::EntriesFinder < ApplicationFinder
   end
 
   def search(criteria, keyword, sort_key)
-    @db.items.target_search_state.each do |item|
+    @db.public_items.each do |item|
       value = criteria[item.name.to_sym]
       next if value.blank?
       case item.item_type
