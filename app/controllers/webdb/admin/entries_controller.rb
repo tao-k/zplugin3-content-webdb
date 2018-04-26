@@ -122,7 +122,6 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
           case item.item_type
           when 'office_hours'
             Webdb::Entry::WEEKDAY_OPTIONS.each_with_index do |w, i|
-            #8.times do |i|
               item_array << entry.item_values.dig(item.name, 'open', i.to_s)
               item_array << entry.item_values.dig(item.name, 'close', i.to_s)
               item_array << entry.item_values.dig(item.name, 'open2', i.to_s)
