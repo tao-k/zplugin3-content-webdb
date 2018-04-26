@@ -10,7 +10,6 @@
         <%= text_area_tag "item_values[#{item.name}]", item_values[item.name].to_s.gsub(/file_contents\//, "#{@item.id}/file_contents/"), class: 'ckeditor' %>
       </td>
     </tr>
-  </table>
   <%- else -%>
     <tr>
       <th><%= item.title %></th>
