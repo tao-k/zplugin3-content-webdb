@@ -39,12 +39,20 @@ class Webdb::Piece::Space < Cms::Piece
       .where(Webdb::Item.arel_table[:item_type].matches('%blank%')).map {|g| [g.title, g.id] }
   end
 
-  def target_options
-    {}
+  def field_options
+    YAML.load(setting_value(:field_options).presence || '{}')
+  end
+
+  def options_for_field(field)
+    return [] if field_options.blank?
+    return [] if field_options[field.id.to_s].blank?
+    return field_options[field.id.to_s]
   end
 
   def is_checked_option?(field, option)
-    return false
+    return false if field_options.blank?
+    return false if field_options[field.id.to_s].blank?
+    return field_options[field.id.to_s].include?(option)
   end
 
 end

@@ -25,24 +25,41 @@ class Webdb::EntriesFinder < ApplicationFinder
           @entries = @entries.where("item_values -> '#{item.name}' -> 'pm' ?| array[:keys]", keys: pm_idx)
         end
       when 'blank_weekday'
+        next if value[:weekday].blank? || value[:option].blank?
         qs = []
         day_values = {}
-        value.each do |key, val|
+        if value[:option].kind_of?(Array)
+          options = value[:option]
+        else
+          options = [value[:option]]
+        end
+        value[:weekday].each do |key, val|
           next if val.blank?
-          qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{key})"
-          day_values["day_value#{key}".to_sym] = {key => val}.to_json
+          options.each_with_index do |opt, n|
+            option_key = "#{key}_#{n}"
+            qs << "(item_values -> '#{item.name}' -> 'weekday' @> :day_value#{option_key})"
+            day_values["day_value#{option_key}".to_sym] = {key => opt}.to_json
+          end
         end
         @entries = @entries.where(qs.join(' OR '), day_values)
       when 'blank_integer'
-        @entries = @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
-        @entries = @entries.where("item_values ->> '#{item.name}' != ''")
-        @entries = @entries.where("(item_values ->> '#{item.name}')::int >= :value", value: value.to_i)
+        if value
+          @entries = @entries.where("item_values ->> '#{item.name}' IS NOT NULL")
+          @entries = @entries.where("item_values ->> '#{item.name}' != ''")
+          @entries = @entries.where("(item_values ->> '#{item.name}')::int >= :value", value: 1)
+        end
       when 'blank_date'
         next if value[:date].blank? || value[:option].blank?
         if date = Date.parse(value[:date]) rescue nil
-          @entries = @entries.joins(:dates)
-            .where(date_arel_table[:event_date].eq(date))
-            .where(date_arel_table[:option_value].eq(value[:option]))
+          if value[:option].kind_of?(Array)
+            @entries = @entries.joins(:dates)
+              .where(date_arel_table[:event_date].eq(date)
+                .and(date_arel_table[:option_value].in(value[:option])))
+          else
+            @entries = @entries.joins(:dates)
+              .where(date_arel_table[:event_date].eq(date)
+                .and(date_arel_table[:option_value].eq(value[:option])))
+          end
         end
       when 'office_hours'
         weekday = value[:week]

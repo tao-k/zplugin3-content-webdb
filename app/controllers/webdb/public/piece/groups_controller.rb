@@ -3,10 +3,12 @@ class Webdb::Public::Piece::GroupsController < Sys::Controller::Public::Base
     @piece = Webdb::Piece::Group.find_by(id: Page.current_piece.id)
     return render plain: '' if @piece.blank?
     @content = @piece.content
+    return render plain: '' if @content.blank?
     @db      = @piece.target_db
-    @target_field = @piece.target_field
     @node    = @content.public_node
+    @target_field = @piece.target_field
     return render plain: '' if @db.blank?
+    return render plain: '' if @node.blank?
     return render plain: '' if @target_field.blank?
   end
 
