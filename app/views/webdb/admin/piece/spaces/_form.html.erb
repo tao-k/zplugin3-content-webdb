@@ -113,8 +113,10 @@ $(document).ready(function() {
           var option_array = field_option.split(/\r\n|\r|\n/);
           $.each(option_array, function(n, opt){
             var id = 'field_options_' + field_id + '_' + n;
+            var name = 'field_options[' + field_id + '][]';
             $('<input>').attr({
                 id: id,
+                name: name,
                 type: 'checkbox',
                 value: opt
             }).appendTo(options_div);
