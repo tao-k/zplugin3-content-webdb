@@ -35,7 +35,7 @@ class Webdb::Piece::Space < Cms::Piece
 
   def target_fields_for_option
     return [] if target_db.blank?
-    target_db.public_items
+    target_db.items
       .where(Webdb::Item.arel_table[:item_type].matches('%blank%')).map {|g| [g.title, g.id] }
   end
 
