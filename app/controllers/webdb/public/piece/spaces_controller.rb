@@ -1,6 +1,6 @@
-class Webdb::Public::Piece::RemnantsController < Sys::Controller::Public::Base
+class Webdb::Public::Piece::SpacesController < Sys::Controller::Public::Base
   def pre_dispatch
-    @piece = Webdb::Piece::Remnant.find_by(id: Page.current_piece.id)
+    @piece = Webdb::Piece::Space.find_by(id: Page.current_piece.id)
     return render plain: '' if @piece.blank?
     @content = @piece.content
     @db      = @piece.target_db

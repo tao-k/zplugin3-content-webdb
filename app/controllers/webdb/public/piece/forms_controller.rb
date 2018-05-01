@@ -6,6 +6,7 @@ class Webdb::Public::Piece::FormsController < Sys::Controller::Public::Base
     @db      = @piece.target_db
     @node    = @content.public_node
     return render plain: '' if @db.blank?
+    return render plain: '' if @node.blank?
   end
 
   def index
