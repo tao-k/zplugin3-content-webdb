@@ -133,7 +133,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
           when 'select_data', 'radio_data'
             val = ""
             if select_data = item.item_options_for_select_data
-              select_data.each{|e| value = e[0] if e[1]== entry.item_values[item.name].to_i }
+              select_data.each{|e| val = e[0] if e[1]== entry.item_values[item.name].to_i }
             end
             item_array << val
           else
