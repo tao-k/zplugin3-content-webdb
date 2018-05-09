@@ -36,9 +36,13 @@
       options_for_select(@db.class::ORDERING_OPTIONS, params[:order]),
       onchange: "submit(this.form)" %>
 </form>
-<% @items.each_with_index do |item, i| %>
-  <%= raw entry_body(@list_style, @db, item) %>
-<% end %>
+<%- if @items.blank? -%>
+  <p>該当する検索結果はありませんでした。</p>
+<%- else -%>
+  <%- @items.each_with_index do |item, i| -%>
+    <%= raw entry_body(@list_style, @db, item) %>
+  <%- end -%>
+<%- end -%>
 
 <%= public_paginate @items -%>
 </div>
