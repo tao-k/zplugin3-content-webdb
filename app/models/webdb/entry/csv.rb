@@ -54,7 +54,6 @@ class Webdb::Entry::Csv < Webdb::Csv
         json_attributes[item.name]['close'] = {}
         json_attributes[item.name]['open2'] = {}
         json_attributes[item.name]['close2'] = {}
-        Rails.logger.debug "****"
         8.times do |idx|
           w = Webdb::Entry::WEEKDAY_OPTIONS[idx]
           json_attributes[item.name]['open'][idx.to_s]  = row["#{item.title}_#{w}_午前_開始"]
