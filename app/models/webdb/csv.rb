@@ -70,6 +70,7 @@ private
     begin
       data = NKF::nkf('-w8 -Lw', file.read)
       return errors.add(:base, "ファイルが空です。") if data.blank?
+      data = data.gsub(/\xE3\x80\x9C/, "\xEF\xBD\x9E")
       self.parse_total = CSV.parse(data, :headers => true).size # format check
     rescue => e
       return errors.add(:base, "ファイル形式が不正です。(#{e})")
