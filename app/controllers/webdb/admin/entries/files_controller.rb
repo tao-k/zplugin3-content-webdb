@@ -3,7 +3,6 @@ class Webdb::Admin::Entries::FilesController < Cms::Controller::Admin::Base
 
   def pre_dispatch
     @content = Webdb::Content::Db.find(params[:content])
-    return error_auth unless Core.user.has_priv?(:read, item: @content.concept)
     @db = @content.dbs.find(params[:db_id])
     @entry = @db.entries.find(params[:entry_id])
   end

@@ -83,7 +83,7 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
   end
 
   def entry_params
-    params.require(:item).permit(:title, :editor_id, :item_values, :in_target_date,
+    params.require(:item).permit(:title, :editor_id, :item_values, :in_target_date, :in_tmp_id,
       :creator_attributes => [:id, :group_id, :user_id],
       :maps_attributes => [:id, :name, :title, :map_lat, :map_lng, :map_zoom,
       :markers_attributes => [:id, :name, :lat, :lng]]).tap do |whitelisted|
