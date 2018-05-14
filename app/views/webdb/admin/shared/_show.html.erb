@@ -8,7 +8,7 @@
     <tr>
       <td colspan="2" class="cke_editor_wrapper">
         <%= text_area_tag "item_values[#{item.name}]",
-          item_values[item.name].to_s.gsub(/\/_system\/.*file_contents\//, "#{@item.id}/file_contents/"),
+          item_values[item.name].to_s.gsub(/\/_system\/(.*?)file_contents\//, "#{@item.id}/file_contents/"),
           class: 'ckeditor' %>
       </td>
     </tr>
