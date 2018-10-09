@@ -13,6 +13,9 @@ ZomekiCMS::Application.routes.draw do
     resources(:dbs,
       :controller => 'admin/dbs',
       :path       => ':content/dbs') do
+      member do
+        get :delete_page
+      end
       resources :items,
         :controller => 'admin/items'
       resources :entries,

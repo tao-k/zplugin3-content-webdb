@@ -29,6 +29,33 @@
     <th><%= f.label :member_detail_body %></th>
     <td><%= f.text_area :member_detail_body, :class => 'body' %></td>
   </tr>
+</table>
+
+  <% if defined?(Zplugin3::Content::Login::Engine) %>
+  <table class="show" id="group_page_field">
+    <%-
+    @item.build_default_group_pages
+    @item.group_pages.each_with_index do |l, i| -%>
+    <tr>
+      <th>
+      <%= f.label :in_group_page_ids %><br />
+      <%= select_tag "item[in_group_pages][][group_id]",
+                             options_for_select(@item.group_options_for_select, l.group_id),
+                             include_blank: true, class: 'selectMark' -%><br />
+      <%= link_to '削除', '#', id: "delete#{l.id}",class: 'remove_row' %>
+      </th>
+      <td>
+        <%= text_area_tag "item[in_group_pages][][body]", l.body, class: 'body' %>
+      </td>
+      <td class="del"></td>
+    </tr>
+    <%- end -%>
+  </table>
+
+  <span><%= button_tag '追加', type: 'button', id: 'add_row' %></span>
+  <% end %>
+
+<table class="show">
   <tr>
     <th><%= f.label :display_limit %></th>
     <td><%= f.text_field :display_limit, :class => 'number' %></td>
@@ -54,3 +81,43 @@
 </table>
 
 <%= creator_form f %>
+
+<%= javascript_tag do %>
+$(function() {
+
+  <% if @item.id %>
+  $('#group_page_field').on("click", "a.remove_row", function (e) {
+    var deleteURL = '<%= webdb_db_path(@content) %>/delete_page';
+    var itemId = $(this).attr('id')
+    var dateID = itemId.replace(/delete/, '')
+    if (dateID != null){
+      $.get( deleteURL + '?page_id=' + dateID , function(data) {
+          //
+        });
+    }
+    if ( $('#group_page_field tr').length == 1) {
+      $('#group_page_field').find('tr:last').find('input, label, select, textarea').each(function() {
+        $(this).val('');
+      });
+    } else {
+      $(this).parent().parent().remove();
+    }
+    return false;
+  });
+  <% else %>
+  $('#group_page_field').on("click", "a.remove_row", function (e) {
+    $(this).parent().parent().remove();
+    return false;
+  });
+  <% end %>
+
+  $('#add_row').click(function(e) {
+    var clone = $('#group_page_field').find('tr:last').clone();
+    clone.find('input, label, select, textarea').each(function() {
+      $(this).val('');
+    });
+    $('#group_page_field').append(clone);
+  });
+
+});
+<% end %>

@@ -1,8 +1,6 @@
 require "uri"
 module Webdb::WebdbHelper
-
-
-  def entry_body(type, db, entry, mode: :body)
+  def entry_body(type, db, entry, group_id: nil)
     template_body = case type
     when :list
       db.list_body
@@ -12,6 +10,8 @@ module Webdb::WebdbHelper
       db.member_list_body
     when :member_detail
       db.member_detail_body
+    when :group_detail
+      db.get_group_body(group_id)
     else
       nil
     end

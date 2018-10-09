@@ -20,6 +20,7 @@ ja:
         editor_content_id: 編集ユーザー
         created_at: 作成日時
         updated_at: 更新日時
+        in_group_pages: グループ向けHTML
       webdb/item:
         state: 状態
         name: アイテムID
