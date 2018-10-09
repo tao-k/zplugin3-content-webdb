@@ -4,6 +4,7 @@ class Webdb::Db < ApplicationRecord
   include Sys::Model::Rel::Creator
   include Sys::Model::Rel::Editor
   include Sys::Model::Rel::EditableGroup
+  include Zplugin3::Content::Webdb::Model::Rel::GroupPage
 
   enum_ish :state, [:public, :closed], predicate: true
 
@@ -64,6 +65,21 @@ class Webdb::Db < ApplicationRecord
     return nil unless defined?(Zplugin3::Content::Login::Engine)
     return nil if editor_content_id.blank?
     Login::Content::User.find_by(id: editor_content_id)
+  end
+
+  def group_options_for_select
+    return [] unless defined?(Zplugin3::Content::Login::Engine)
+    login_content_ids = [member_content.try(:id), editor_content.try(:id)].compact
+    return [] if login_content_ids.blank?
+    Login::Group.where(content_id: login_content_ids, state: :enabled).map { |g| [g.title, g.id] }
+  end
+
+  def get_group_body(group_id)
+    if group_config = group_pages.find_by(group_id: group_id)
+      group_config.body
+    else
+      member_detail_body
+    end
   end
 
 private

@@ -45,6 +45,8 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
 
   def entry
     @list_style = @member_user.present? || @editor_user.present? ? :member_detail : :detail
+    @list_style = :group_detail if @list_style == :member_detail && (@member_user.try(:group).present? || @editor_user.try(:group).present?)
+    @group_ids = [@member_user.try(:group).try(:id), @editor_user.try(:group).try(:id) ].compact
     @item = @db.entries.find_by(name: params[:name])
     return http_error(404) unless @item
     title_item = @db.items.public_state.first

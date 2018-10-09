@@ -42,12 +42,23 @@ class Webdb::Admin::DbsController < Cms::Controller::Admin::Base
     _destroy(@item)
   end
 
+  def delete_page
+    @item = @content.dbs.find(params[:id])
+    @group_page = @item.group_pages.find_by(id: params[:page_id])
+    return http_error(404) unless @group_page
+    if @group_page.destroy
+      render plain: "OK"
+    else
+      render plain: "NG"
+    end
+  end
   private
 
   def db_params
     params.require(:item).permit(:body, :list_body, :detail_body, :sort_no, :state, :title,
       :member_list_body, :member_detail_body, :display_limit,
       :member_content_id, :editor_content_id,
+      :in_group_pages => [:group_id, :body],
       :creator_attributes => [:id, :group_id, :user_id])
   end
 end
