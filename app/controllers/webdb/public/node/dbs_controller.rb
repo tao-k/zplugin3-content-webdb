@@ -26,6 +26,8 @@ class Webdb::Public::Node::DbsController < Cms::Controller::Public::Base
 
   def result
     @list_style = @member_user.present? || @editor_user.present? ? :member_list : :list
+    @list_style = :group_list if @list_style == :member_list && (@member_user.try(:group).present? || @editor_user.try(:group).present?)
+    @group_ids = [@member_user.try(:group).try(:id), @editor_user.try(:group).try(:id) ].compact
     Page.title = @db.title
     @entries = @db.entries.public_state
     criteria = entry_criteria

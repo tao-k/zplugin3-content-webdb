@@ -38,10 +38,13 @@
     @item.group_pages.each_with_index do |l, i| -%>
     <tr>
       <th>
-      <%= f.label :in_group_page_ids %><br />
+      <%= f.label :in_group_page_ids %>
+      <%= select_tag "item[in_group_pages][][style_type]",
+                             options_for_select(l.class::TYPE_OPTIONS, l.style_type) -%><br />
+      <br />
       <%= select_tag "item[in_group_pages][][group_id]",
                              options_for_select(@item.group_options_for_select, l.group_id),
-                             include_blank: true, class: 'selectMark' -%><br />
+                             include_blank: true, class: 'selectMark' -%>閲覧用<br />
       <%= link_to '削除', '#', id: "delete#{l.id}",class: 'remove_row' %>
       </th>
       <td>

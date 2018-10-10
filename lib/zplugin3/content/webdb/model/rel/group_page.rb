@@ -32,12 +32,14 @@ module Zplugin3::Content::Webdb::Model::Rel::GroupPage
     @_sent_group_pages = true
     @groups.each do |in_group_page|
       group_id   = in_group_page[:group_id] || nil
+      style_type = in_group_page[:style_type] || 'list'
       next if group_id.blank?
       body = in_group_page[:body] || nil
-      group_page = self.group_pages.find_by(group_id: group_id) || self.group_pages.build(group_id: group_id)
-      group_page.db_id     = id
-      group_page.group_id  = group_id
-      group_page.body      = body
+      group_page = self.group_pages.find_by(group_id: group_id, style_type: style_type) || self.group_pages.build(group_id: group_id, style_type: style_type)
+      group_page.db_id      = id
+      group_page.group_id   = group_id
+      group_page.style_type = style_type
+      group_page.body       = body
       group_page.save
     end
     return true
