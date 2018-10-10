@@ -8,10 +8,12 @@ module Webdb::WebdbHelper
       db.detail_body
     when :member_list
       db.member_list_body
+    when :group_list
+      db.group_html(group_id, 'list')
     when :member_detail
       db.member_detail_body
     when :group_detail
-      db.get_group_body(group_id)
+      db.group_html(group_id, 'detail')
     else
       nil
     end

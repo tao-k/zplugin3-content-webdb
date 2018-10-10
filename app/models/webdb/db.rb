@@ -74,11 +74,12 @@ class Webdb::Db < ApplicationRecord
     Login::Group.where(content_id: login_content_ids, state: :enabled).map { |g| [g.title, g.id] }
   end
 
-  def get_group_body(group_id)
-    if group_config = group_pages.find_by(group_id: group_id)
+  def group_html(group_id, style_type)
+    if group_config = group_pages.where(group_id: group_id, style_type: style_type).first
       group_config.body
     else
-      member_detail_body
+      return member_detail_body if style_type == 'detail'
+      return member_list_body
     end
   end
 

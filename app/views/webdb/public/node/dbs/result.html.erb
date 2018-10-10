@@ -40,7 +40,7 @@
   <p>該当する検索結果はありませんでした。</p>
 <%- else -%>
   <%- @items.each_with_index do |item, i| -%>
-    <%= raw entry_body(@list_style, @db, item) %>
+    <%= raw entry_body(@list_style, @db, item, group_id: @group_ids) %>
   <%- end -%>
 <%- end -%>
 
