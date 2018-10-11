@@ -92,7 +92,7 @@ $(function() {
     var deleteURL = '<%= webdb_db_path(@content) %>/delete_page';
     var itemId = $(this).attr('id')
     var dateID = itemId.replace(/delete/, '')
-    if (dateID != null){
+    if ( dateID != null ){
       $.get( deleteURL + '?page_id=' + dateID , function(data) {
           //
         });
@@ -108,7 +108,14 @@ $(function() {
   });
   <% else %>
   $('#group_page_field').on("click", "a.remove_row", function (e) {
-    $(this).parent().parent().remove();
+    if ( $('#group_page_field tr').length == 1) {
+      $('#group_page_field').find('tr:last').find('input, label, select, textarea').each(function() {
+        $(this).val('');
+      });
+    } else {
+      $(this).parent().parent().remove();
+    }
+
     return false;
   });
   <% end %>
