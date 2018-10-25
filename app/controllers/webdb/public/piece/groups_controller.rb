@@ -20,7 +20,7 @@ class Webdb::Public::Piece::GroupsController < Sys::Controller::Public::Base
 
     groups = @reference_db.entries.public_state
     if sort_field = @piece.sort_field
-      groups = groups.order("item_values -> '#{sort_field.name}' ASC")
+      groups = groups.order(Arel.sql("item_values -> '#{sort_field.name}' ASC"))
     end
 
     groups = groups.map{|a|
