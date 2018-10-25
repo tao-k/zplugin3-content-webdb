@@ -98,7 +98,7 @@ class Webdb::EntriesFinder < ApplicationFinder
     if sort_key && sort_columns
       key, order  = sort_key.split(/\s/)
       if idx = sort_columns.index(key)
-        @entries = @entries.order("item_values -> '#{sort_columns[idx]}' #{ordering(order)}")
+        @entries = @entries.order(Arel.sql("item_values -> '#{sort_columns[idx]}' #{ordering(order)}"))
       end
     end
     @entries
