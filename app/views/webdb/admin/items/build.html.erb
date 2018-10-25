@@ -1,0 +1,5 @@
+<%- if params[:search] -%>
+<%= render 'webdb/admin/_partial/search/form', db: @db, item_values: @item_values, use_admin: true  if @db %>
+<%- else -%>
+<%= render 'webdb/admin/shared/form', db: @db, item_values: @item_values, use_admin: true if @db %>
+<%- end -%>

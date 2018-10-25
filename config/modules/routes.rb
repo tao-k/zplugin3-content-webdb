@@ -18,6 +18,10 @@ ZomekiCMS::Application.routes.draw do
       end
       resources :items,
         :controller => 'admin/items'
+        collection do
+          post :build
+          put :build
+        end
       resources :entries,
         :controller => 'admin/entries' do
           get 'file_contents/(*path)' => 'admin/entries/files#content'
