@@ -44,6 +44,11 @@ class Webdb::Admin::ItemsController < Cms::Controller::Admin::Base
     _destroy @item
   end
 
+  def build
+    @item_values = params[:item] && params[:item][:item_values] ? params[:item][:item_values] : {}
+    render 'build', layout: false
+  end
+
   private
 
   def item_params
