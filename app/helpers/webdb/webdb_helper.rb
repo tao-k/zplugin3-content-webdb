@@ -82,7 +82,7 @@ module Webdb::WebdbHelper
       end
     end
     return image_sources
-end
+  end
 
   def entry_item_value(item, entry, files)
     return '' if item.blank? || entry.blank?
