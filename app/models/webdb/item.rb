@@ -15,7 +15,7 @@ class Webdb::Item < ApplicationRecord
                        ['空枠/数値', 'blank_integer'],['空枠/記号（曜日）', 'blank_weekday'],['空枠/記号（日程）', 'blank_date']]
 
 
-  default_scope { order("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no") }
+  default_scope { order(Arel.sql("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no")) }
 
   after_save     Webdb::Publisher::DbCallbacks.new, if: :changed?
   before_destroy Webdb::Publisher::DbCallbacks.new
