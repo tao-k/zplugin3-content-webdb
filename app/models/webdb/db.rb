@@ -21,7 +21,7 @@ class Webdb::Db < ApplicationRecord
   STATE_OPTIONS = [['公開', 'public'], ['非公開', 'closed']]
   ORDERING_OPTIONS = [['昇順', 'asc'], ['降順', 'desc']]
 
-  default_scope { order("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no") }
+  default_scope { order(Arel.sql("#{self.table_name}.sort_no IS NULL, #{self.table_name}.sort_no")) }
 
   belongs_to :content, :foreign_key => :content_id, :class_name => 'Webdb::Content::Db'
   validates :content_id, presence: true
