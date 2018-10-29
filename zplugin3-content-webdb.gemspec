@@ -17,11 +17,11 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails"
-  s.add_dependency 'will_paginate', '~> 3.1.3'
+  s.add_dependency 'will_paginate'
 
-  s.add_dependency 'delayed_job', '~> 4.1.3'
-  s.add_dependency 'delayed_job_active_record', '~> 4.1.2'
-  s.add_dependency 'delayed_job_master', '~> 1.1.0'
+  s.add_dependency 'delayed_job'
+  s.add_dependency 'delayed_job_active_record'
+  s.add_dependency 'delayed_job_master'
 
   s.add_dependency "pg"
 
