@@ -17,11 +17,12 @@ ZomekiCMS::Application.routes.draw do
         get :delete_page
       end
       resources :items,
-        :controller => 'admin/items'
+        :controller => 'admin/items' do
         collection do
           post :build
           put :build
         end
+      end
       resources :entries,
         :controller => 'admin/entries' do
           get 'file_contents/(*path)' => 'admin/entries/files#content'

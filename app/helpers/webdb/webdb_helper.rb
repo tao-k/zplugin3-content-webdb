@@ -1,5 +1,12 @@
 require "uri"
 module Webdb::WebdbHelper
+
+ def entry_title_value(item, db, files)
+    return nil if db.blank?
+    return nil if db.items.blank?
+    return entry_item_value(db.items.first, item, files)
+  end
+
   def entry_body(type, db, entry, group_id: nil)
     template_body = case type
     when :list
@@ -42,6 +49,39 @@ module Webdb::WebdbHelper
       return "" if first_item.blank?
       return entry.item_values[first_item.name]
     end
+  end
+
+  def icon_value(item, entry, mode: :html)
+    sources = icon_url(item, entry)
+    case mode
+    when :html
+      icons = sources.map{|s|
+        image_tag(s)
+      }
+      icons.join(' ')
+    else
+      sources.first
+    end
+
+  end
+
+  def icon_url(item, entry)
+    image_sources = []
+    case item.item_type
+    when 'radio_data'
+      if select_data = item.item_options_for_icons
+        select_data.each{|e|
+          image_sources << e[0] if e[1]== entry.item_values[item.name].to_i
+        }
+      end
+    when 'check_data'
+      if entry.item_values.dig(item.name, 'check').present?
+        entry.item_values[item.name]['check'].each{|w|
+          item.item_options_for_icons.each{|a| image_sources << a[0] if a[1] == w.to_i}
+        }
+      end
+    end
+    return image_sources
   end
 
   def entry_item_value(item, entry, files)

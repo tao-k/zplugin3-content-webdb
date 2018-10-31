@@ -18,11 +18,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails"
   s.add_dependency 'will_paginate'
-
   s.add_dependency 'delayed_job'
   s.add_dependency 'delayed_job_active_record'
   s.add_dependency 'delayed_job_master'
-
   s.add_dependency "pg"
 
 end

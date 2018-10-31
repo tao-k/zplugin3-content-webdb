@@ -210,7 +210,7 @@ $(function() {
     $(this).parent().remove();
     return false;
   });
-  <% if @item.id %>
+  <% if @item.try(:id) %>
   $(".deleteDate").click(function (e) {
     e.preventDefault();
     <% if defined?(use_admin) %>
