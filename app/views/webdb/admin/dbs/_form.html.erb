@@ -38,7 +38,7 @@
     @item.group_pages.each_with_index do |l, i| -%>
     <tr>
       <th>
-      <%= f.label :in_group_page_ids %>
+      <%= f.label :in_group_pages %>
       <%= select_tag "item[in_group_pages][][style_type]",
                              options_for_select(l.class::TYPE_OPTIONS, l.style_type) -%><br />
       <br />
