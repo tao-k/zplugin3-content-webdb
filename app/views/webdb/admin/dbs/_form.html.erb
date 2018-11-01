@@ -32,6 +32,7 @@
 </table>
 
   <% if defined?(Zplugin3::Content::Login::Engine) %>
+  <table class="show" id="deleted_group_field" style="display: none;"></table>
   <table class="show" id="group_page_field">
     <%-
     @item.build_default_group_pages
@@ -39,6 +40,7 @@
     <tr>
       <th>
       <%= f.label :in_group_pages %>
+      <%= hidden_field_tag "item[in_group_pages][][delete_flg]", 0, class: 'delete' %>
       <%= select_tag "item[in_group_pages][][style_type]",
                              options_for_select(l.class::TYPE_OPTIONS, l.style_type) -%><br />
       <br />
@@ -87,38 +89,21 @@
 <%= javascript_tag do %>
 $(function() {
 
-  <% if @item.id %>
   $('#group_page_field').on("click", "a.remove_row", function (e) {
-    var deleteURL = '<%= webdb_db_path(@content) %>/delete_page';
-    var itemId = $(this).attr('id')
-    var dateID = itemId.replace(/delete/, '')
-    if ( dateID != null ){
-      $.get( deleteURL + '?page_id=' + dateID , function(data) {
-          //
-        });
-    }
     if ( $('#group_page_field tr').length == 1) {
       $('#group_page_field').find('tr:last').find('input, label, select, textarea').each(function() {
         $(this).val('');
       });
     } else {
-      $(this).parent().parent().remove();
+      var clone = $(this).parent().parent();
+      clone.find('.delete').each(function() {
+        $(this).val(1);
+      });
+      $('#deleted_group_field').append(clone);
     }
     return false;
   });
-  <% else %>
-  $('#group_page_field').on("click", "a.remove_row", function (e) {
-    if ( $('#group_page_field tr').length == 1) {
-      $('#group_page_field').find('tr:last').find('input, label, select, textarea').each(function() {
-        $(this).val('');
-      });
-    } else {
-      $(this).parent().parent().remove();
-    }
 
-    return false;
-  });
-  <% end %>
 
   $('#add_row').click(function(e) {
     var clone = $('#group_page_field').find('tr:last').clone();

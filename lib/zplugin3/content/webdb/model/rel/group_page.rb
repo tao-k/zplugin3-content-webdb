@@ -33,14 +33,22 @@ module Zplugin3::Content::Webdb::Model::Rel::GroupPage
     @groups.each do |in_group_page|
       group_id   = in_group_page[:group_id] || nil
       style_type = in_group_page[:style_type] || 'list'
+      delete_flg = in_group_page[:delete_flg] || 0
       next if group_id.blank?
       body = in_group_page[:body] || nil
       group_page = self.group_pages.find_by(group_id: group_id, style_type: style_type) || self.group_pages.build(group_id: group_id, style_type: style_type)
-      group_page.db_id      = id
-      group_page.group_id   = group_id
-      group_page.style_type = style_type
-      group_page.body       = body
-      group_page.save
+
+      if group_page.id.present? && !delete_flg.to_i.zero?
+        group_page.destroy
+      elsif !delete_flg.to_i.zero?
+        next
+      else
+        group_page.db_id      = id
+        group_page.group_id   = group_id
+        group_page.style_type = style_type
+        group_page.body       = body
+        group_page.save
+      end
     end
     return true
   end
