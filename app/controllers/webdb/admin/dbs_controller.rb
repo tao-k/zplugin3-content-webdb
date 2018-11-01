@@ -58,7 +58,7 @@ class Webdb::Admin::DbsController < Cms::Controller::Admin::Base
     params.require(:item).permit(:body, :list_body, :detail_body, :sort_no, :state, :title,
       :member_list_body, :member_detail_body, :display_limit,
       :member_content_id, :editor_content_id,
-      :in_group_pages => [:style_type, :group_id, :body],
+      :in_group_pages => [:style_type, :group_id, :body, :delete_flg],
       :creator_attributes => [:id, :group_id, :user_id])
   end
 end
