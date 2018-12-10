@@ -202,7 +202,7 @@ module Webdb::WebdbHelper
     when 'rich_text'
       value
     else
-      uri_reg = URI.regexp(%w[http https])
+      uri_reg = /(?:^|[\s　]+)((?:https?|ftp):\/\/[^\s　]+)/
       value.gsub!(uri_reg) {%Q{<a href="#{$&}" target="_blank">#{$&}</a>}} if value.present? && value =~ uri_reg
     end
     value.html_safe
