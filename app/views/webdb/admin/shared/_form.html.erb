@@ -92,31 +92,15 @@
                style: item.style_attribute,
                include_blank: true %>
             <label>午前</label>
-            <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, open_am.present? ? open_am.split(/:/)[0] : nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, open_am.present? ? open_am.split(/:/)[1] : nil),
-              include_blank: true %><span class="minute">分</span><span class="between">～</span>
-            <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, close_am.present? ? close_am.split(/:/)[0] : nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, close_am.present? ? close_am.split(/:/)[1] : nil),
-              include_blank: true %><span class="minute">分</span><span class="separator">/</span>
+            <%= text_field_tag "item[item_values][#{item.name}][am_open][]", open_am,
+              style: item.style_attribute, class: 'timepicker' %><span class="between">～</span>
+            <%= text_field_tag "item[item_values][#{item.name}][am_close][]", close_am,
+              style: item.style_attribute, class: 'timepicker' %><span class="separator">/</span>
             <label>午後</label>
-            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, open_pm.present? ? open_pm.split(/:/)[0] : nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, open_pm.present? ? open_pm.split(/:/)[1] : nil),
-              include_blank: true %><span class="minute">分</span><span class="between">～</span>
-            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, close_pm.present? ? close_pm.split(/:/)[0] : nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, close_pm.present? ? close_pm.split(/:/)[1] : nil),
-              include_blank: true %><span class="minute">分</span>
+            <%= text_field_tag "item[item_values][#{item.name}][pm_open][]", open_pm,
+              style: item.style_attribute, class: 'timepicker' %><span class="between">～</span>
+            <%= text_field_tag "item[item_values][#{item.name}][pm_close][]", close_pm,
+              style: item.style_attribute, class: 'timepicker' %>
             </div>
           <%- } -%>
             <div class="officeForm">
@@ -125,31 +109,15 @@
                style: item.style_attribute,
                include_blank: true %>
             <label>午前</label>
-            <%= select_tag "item[item_values][#{item.name}][am_open_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][am_open_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %><span class="minute">分</span><span class="between">～</span>
-            <%= select_tag "item[item_values][#{item.name}][am_close_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][am_close_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %><span class="minute">分</span><span class="separator">/</span>
+            <%= text_field_tag "item[item_values][#{item.name}][am_open][]", nil,
+              style: item.style_attribute, class: 'timepicker' %><span class="between">～</span>
+            <%= text_field_tag "item[item_values][#{item.name}][am_close][]", nil,
+              style: item.style_attribute, class: 'timepicker' %><span class="separator">/</span>
             <label>午後</label>
-            <%= select_tag "item[item_values][#{item.name}][pm_open_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][pm_open_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %><span class="minute">分</span><span class="between">～</span>
-            <%= select_tag "item[item_values][#{item.name}][pm_close_hour][]",
-              options_for_select(@item.class::TIME_OPTIONS, nil),
-              include_blank: true %><span class="hour">時</span>
-               <%= select_tag "item[item_values][#{item.name}][pm_close_min][]",
-              options_for_select(@item.class::MINUTE_OPTIONS, nil),
-              include_blank: true %><span class="minute">分</span>
+            <%= text_field_tag "item[item_values][#{item.name}][pm_open][]", nil,
+              style: item.style_attribute, class: 'timepicker' %><span class="between">～</span>
+            <%= text_field_tag "item[item_values][#{item.name}][pm_close][]", nil,
+              style: item.style_attribute, class: 'timepicker' %>
             </div>
           </div>
           <div>
@@ -205,6 +173,7 @@
 $(function() {
 
   $('input.datepicker').datepicker();
+  $('input.timepicker').timepicker();
 
   $(document.body).on('click', '.removeDate',  function(e) {
     $(this).parent().remove();
@@ -229,9 +198,14 @@ $(function() {
 
   $('.addOfficeHour').click(function(e) {
     var officeNumber = $(this).attr('id').replace(/office/, '');
-    $("#office_hours_" + officeNumber + "> div:last").clone(true).appendTo(
-      $("#office_hours_" + officeNumber)
-    );
+    var clone =  $("#office_hours_" + officeNumber + "> div:last").clone();
+    console.log(clone.find('input.timepicker'));
+    clone.find('input.timepicker').removeClass("hasDatepicker")
+      .removeData("datepicker")
+      .removeAttr("id")
+      .unbind()
+      .timepicker();
+    clone.appendTo($("#office_hours_" + officeNumber));
     return false;
   });
 
