@@ -21,26 +21,27 @@
     map = new MapViewer('map_canvas', <%= content.default_map_position.first %>, <%= content.default_map_position.last %>);
     nearbyLocation = new google.maps.LatLng( <%= content.default_map_position.first %>, <%= content.default_map_position.last %> );
     var markers = [];
+    var points = {};
     var infoWindows = {};
     <%- markers.each.each_with_index do |item, i|
       next unless map_markers = item.map_marker
       map_icon = item.map_icon
       map_markers.each_with_index do |marker, n| -%>
       var marker_id = "marker" + <%= i %> + "_" + <%= n %>;
-      var new_marker = new google.maps.Marker({
+      points[marker_id] = new google.maps.Marker({
         position: new google.maps.LatLng( <%= marker.latitude %>, <%= marker.longitude %>),
         title: marker_id
         });
         <%- if map_icon.present? -%>
-          new_marker.setIcon('<%= map_icon %>');
+          points[marker_id].setIcon('<%= map_icon %>');
         <%- end -%>
       infoWindows[marker_id] = new google.maps.InfoWindow({
         content: '<%=raw simple_format(marker_window_text(item, @piece), {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>'
       });
-      google.maps.event.addListener(new_marker, 'click', function() {
-        infoWindows[marker_id].open(map._map_canvas, new_marker);
+      google.maps.event.addListener(points[marker_id], 'click', function() {
+        infoWindows[marker_id].open(map._map_canvas, points[marker_id]);
       });
-      markers.push(new_marker);
+      markers.push(points[marker_id]);
       <%- end -%>
     <%- end -%>
     var markerCluster = new MarkerClusterer(map._map_canvas,
