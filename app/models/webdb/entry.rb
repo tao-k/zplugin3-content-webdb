@@ -182,7 +182,6 @@ class Webdb::Entry < ApplicationRecord
         end
       when 'office_hours'
         if item_values[item.name]
-          next if item_values.dig(item.name, 'open').present?
           item_values[item.name]['open'] = {}
           item_values[item.name]['close'] = {}
           item_values[item.name]['open2'] = {}
@@ -190,31 +189,11 @@ class Webdb::Entry < ApplicationRecord
           WEEKDAY_OPTIONS.each_with_index{|w, n|
             i = item_values[item.name]['week'].index(w)
             next if i.blank?
-            if item_values.dig(item.name, 'am_open_hour').present? &&  item_values.dig(item.name, 'am_open_min')[i].present?
-              am_open  = "#{item_values.dig(item.name, 'am_open_hour')[i]}:#{item_values.dig(item.name, 'am_open_min')[i]}"
-              item_values[item.name]['open'][n.to_s] = am_open
-            end
-            if item_values.dig(item.name, 'am_close_hour').present? &&  item_values.dig(item.name, 'am_close_min')[i].present?
-              am_close  = "#{item_values.dig(item.name, 'am_close_hour')[i]}:#{item_values.dig(item.name, 'am_close_min')[i]}"
-              item_values[item.name]['close'][n.to_s] = am_close
-            end
-            if item_values.dig(item.name, 'pm_open_hour').present? &&  item_values.dig(item.name, 'pm_open_min')[i].present?
-              pm_open  = "#{item_values.dig(item.name, 'pm_open_hour')[i]}:#{item_values.dig(item.name, 'pm_open_min')[i]}"
-              item_values[item.name]['open2'][n.to_s] = pm_open
-            end
-            if item_values.dig(item.name, 'pm_close_hour').present? &&  item_values.dig(item.name, 'pm_close_min')[i].present?
-              pm_close  = "#{item_values.dig(item.name, 'pm_close_hour')[i]}:#{item_values.dig(item.name, 'pm_close_min')[i]}"
-              item_values[item.name]['close2'][n.to_s] = pm_close
-            end
+            item_values[item.name]['open'][n.to_s]   = item_values.dig(item.name, 'am_open')[i]
+            item_values[item.name]['close'][n.to_s]  = item_values.dig(item.name, 'am_close')[i]
+            item_values[item.name]['open2'][n.to_s]  = item_values.dig(item.name, 'pm_open')[i]
+            item_values[item.name]['close2'][n.to_s] = item_values.dig(item.name, 'pm_close')[i]
           }
-          item_values[item.name].delete('am_open_hour')
-          item_values[item.name].delete('am_open_min')
-          item_values[item.name].delete('am_close_hour')
-          item_values[item.name].delete('am_close_min')
-          item_values[item.name].delete('pm_open_hour')
-          item_values[item.name].delete('pm_open_min')
-          item_values[item.name].delete('pm_close_hour')
-          item_values[item.name].delete('pm_close_min')
         end
       when 'blank_weekday'
         if item_values.dig(item.name, 'weekday')

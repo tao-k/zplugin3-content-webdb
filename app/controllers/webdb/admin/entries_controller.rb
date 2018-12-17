@@ -96,6 +96,8 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
     require 'csv'
     db_items = @db.items.public_state
     bom = %w(EF BB BF).map { |e| e.hex.chr }.join
+    data_options = {}
+
     data = CSV.generate(bom, force_quotes: true) do |csv|
       columns = [ "ID", "状態", "削除" ]
       db_items.each do |item|
@@ -132,8 +134,11 @@ class Webdb::Admin::EntriesController < Cms::Controller::Admin::Base
             item_array << entry.item_values.dig(item.name, 'text')
           when 'select_data', 'radio_data'
             val = ""
-            if select_data = item.item_options_for_select_data
-              select_data.each{|e| val = e[0] if e[1]== entry.item_values[item.name].to_i }
+            if entry.item_values[item.name].present?
+              data_options[item.name] = item.item_options_for_select_data if data_options[item.name].blank?
+              if select_data = data_options[item.name]
+                select_data.each{|e| val = e[0] if e[1] == entry.item_values[item.name].to_i }
+              end
             end
             item_array << val
           else

@@ -3,8 +3,11 @@
   <%= text_field_tag "address", '' %><input type="button" value="検索" id="doGeocode" />
 </div>
   <div id="map_canvas" style="height:450px;"></div>
+  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
   <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{content.site.google_map_api_key}&region=jp" %>
   <%= javascript_include_tag '/_common/modules/map/js/map.js' %>
+
   <%= javascript_tag do -%>
   var map;
   var geocoder = new google.maps.Geocoder();
@@ -17,16 +20,49 @@
   function initMap(){
     map = new MapViewer('map_canvas', <%= content.default_map_position.first %>, <%= content.default_map_position.last %>);
     nearbyLocation = new google.maps.LatLng( <%= content.default_map_position.first %>, <%= content.default_map_position.last %> );
-
-    <%- markers.each do |item|
+    var markers = [];
+    var infoWindows = {};
+    <%- markers.each.each_with_index do |item, i|
       next unless map_markers = item.map_marker
       map_icon = item.map_icon
-      map_markers.each do |marker| -%>
-      map.set_marker('<%= "#{marker.latitude}_#{marker.longitude}" %>', <%= marker.latitude %>, <%= marker.longitude %>, '<%= marker.title %>',
-                     '<%=raw simple_format(marker_window_text(item, @piece), {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>',
-                     '<%= map_icon %>' );
+      map_markers.each_with_index do |marker, n| -%>
+      var marker_id = "marker" + <%= i %> + "_" + <%= n %>;
+      var new_marker = new google.maps.Marker({
+        position: new google.maps.LatLng( <%= marker.latitude %>, <%= marker.longitude %>),
+        title: marker_id
+        });
+        <%- if map_icon.present? -%>
+          new_marker.setIcon('<%= map_icon %>');
+        <%- end -%>
+      infoWindows[marker_id] = new google.maps.InfoWindow({
+        content: '<%=raw simple_format(marker_window_text(item, @piece), {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>'
+      });
+      google.maps.event.addListener(new_marker, 'click', function() {
+        infoWindows[marker_id].open(map._map_canvas, new_marker);
+      });
+      markers.push(new_marker);
       <%- end -%>
     <%- end -%>
+    var markerCluster = new MarkerClusterer(map._map_canvas,
+      markers,
+      { zoomOnClick: false,
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+       });
+    google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
+      var contents = [];
+      var first_marker ;
+      cluster.markers_.forEach(function(e){
+        contents.push(infoWindows[e.title].content);
+        first_marker = e;
+      });
+      var window_text = contents.join(" ");
+      var info = new google.maps.InfoWindow({
+        content: window_text,
+        position: cluster.center_
+      });
+      info.open(map._map_canvas);
+    });
+
   }
 
   $('#address').keypress( function ( e ) {
