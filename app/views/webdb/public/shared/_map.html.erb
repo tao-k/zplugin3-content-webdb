@@ -27,21 +27,20 @@
       next unless map_markers = item.map_marker
       map_icon = item.map_icon
       map_markers.each_with_index do |marker, n| -%>
-      var marker_id = "marker" + <%= i %> + "_" + <%= n %>;
-      points[marker_id] = new google.maps.Marker({
+      points["marker<%= i %>_<%= n %>"] = new google.maps.Marker({
         position: new google.maps.LatLng( <%= marker.latitude %>, <%= marker.longitude %>),
-        title: marker_id
+        title: "marker<%= i %>_<%= n %>"
         });
         <%- if map_icon.present? -%>
-          points[marker_id].setIcon('<%= map_icon %>');
+          points["marker<%= i %>_<%= n %>"].setIcon('<%= map_icon %>');
         <%- end -%>
-      infoWindows[marker_id] = new google.maps.InfoWindow({
+      infoWindows["marker<%= i %>_<%= n %>"] = new google.maps.InfoWindow({
         content: '<%=raw simple_format(marker_window_text(item, @piece), {}, sanitize: false).gsub(/\r|\n/, '').gsub("'", '&#x27;') %>'
       });
-      google.maps.event.addListener(points[marker_id], 'click', function() {
-        infoWindows[marker_id].open(map._map_canvas, points[marker_id]);
+      google.maps.event.addListener(points["marker<%= i %>_<%= n %>"], 'click', function(e) {
+        infoWindows["marker<%= i %>_<%= n %>"].open(map._map_canvas, points["marker<%= i %>_<%= n %>"]);
       });
-      markers.push(points[marker_id]);
+      markers.push(points["marker<%= i %>_<%= n %>"]);
       <%- end -%>
     <%- end -%>
     var markerCluster = new MarkerClusterer(map._map_canvas,
