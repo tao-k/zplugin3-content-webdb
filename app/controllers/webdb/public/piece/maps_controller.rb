@@ -9,7 +9,7 @@ class Webdb::Public::Piece::MapsController < Sys::Controller::Public::Base
 
   def index
     @items   = @db.entries.public_state
-    @markers = @items.joins(maps: :markers)
+    @markers = @items.distinct.joins(maps: :markers)
   end
 
 end
