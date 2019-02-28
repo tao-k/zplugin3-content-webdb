@@ -7,7 +7,7 @@
     <tr>
       <th><%= f.label :editor_id %></th>
       <td><%= select_tag 'item[editor_id]',
-                         options_from_collection_for_select(@db.editor_content.try(:users), :id, :account, @item.editor_id), include_blank: true %></td>
+                         options_from_collection_for_select(@db.editor_content.users.order(:account), :id, :account, @item.editor_id), include_blank: true %></td>
      </tr>
    </table>
 <% end %>
