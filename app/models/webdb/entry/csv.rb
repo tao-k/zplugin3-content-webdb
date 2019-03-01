@@ -154,7 +154,17 @@ class Webdb::Entry::Csv < Webdb::Csv
         entry[key] = value
       end
       entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
-      entry.maps_attributes = maps_attributes if maps_attributes.present?
+      if maps_attributes.present?
+        if entry_maps = entry.maps
+          map = entry_maps.first
+          maps_attributes[0][:id] = map.id
+          maps_attributes[0][:title] = map.title
+          maps_attributes[0][:map_lat] = map.map_lat
+          maps_attributes[0][:map_lng] = map.map_lng
+          maps_attributes[0][:map_zoom] = map.map_zoom
+        end
+        entry.maps_attributes = maps_attributes
+      end
       entry.save
     end
     entry
