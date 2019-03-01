@@ -164,7 +164,7 @@ class Webdb::Entry::Csv < Webdb::Csv
           maps_attributes[0][:map_zoom] = map.try(:map_zoom)
           if entry_markers = map.markers
             marker = entry_markers.first
-            maps_attributes[0][:markers_attributes][0][:id] = marker.try(:id)
+            maps_attributes[0]['markers_attributes'][0][:id] = marker.try(:id)
           end
         end
         entry.maps_attributes = maps_attributes
