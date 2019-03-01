@@ -155,8 +155,8 @@ class Webdb::Entry::Csv < Webdb::Csv
       end
       entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
       if maps_attributes.present?
-        if entry_maps = entry.maps
-          map = entry_maps.first
+        if entry.id.present? && entry.maps.present?
+          map = entry.maps.first
           if map.present?
             maps_attributes[0][:id] = map.try(:id)
             maps_attributes[0][:title] = map.try(:title)
