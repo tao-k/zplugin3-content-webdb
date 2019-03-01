@@ -157,11 +157,15 @@ class Webdb::Entry::Csv < Webdb::Csv
       if maps_attributes.present?
         if entry_maps = entry.maps
           map = entry_maps.first
-          maps_attributes[0][:id] = map.id
-          maps_attributes[0][:title] = map.title
-          maps_attributes[0][:map_lat] = map.map_lat
-          maps_attributes[0][:map_lng] = map.map_lng
-          maps_attributes[0][:map_zoom] = map.map_zoom
+          maps_attributes[0][:id] = map.try(:id)
+          maps_attributes[0][:title] = map.try(:title)
+          maps_attributes[0][:map_lat] = map.try(:map_lat)
+          maps_attributes[0][:map_lng] = map.try(:map_lng)
+          maps_attributes[0][:map_zoom] = map.try(:map_zoom)
+          if entry_markers = map.markers
+            marker = entry_markers.first
+            maps_attributes[0][:markers_attributes][0][:id] = marker.try(:id)
+          end
         end
         entry.maps_attributes = maps_attributes
       end
