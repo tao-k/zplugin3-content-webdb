@@ -156,7 +156,7 @@ class Webdb::Entry::Csv < Webdb::Csv
       entry.in_target_dates = date_attributes.with_indifferent_access if date_attributes.present?
       if maps_attributes.present?
         if entry.id.present? && entry.maps.present?
-          map = entry.maps.first
+          map = entry.maps.order(:created_at).first
           if map.present?
             maps_attributes[0]['id'] = map.id
             maps_attributes[0]['title'] = map.title
