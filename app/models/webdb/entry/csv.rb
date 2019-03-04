@@ -107,7 +107,7 @@ class Webdb::Entry::Csv < Webdb::Csv
       entry[key] = value
     end
 
-    if row['緯度'] && row['経度']
+    if row['緯度'].present? && row['経度'].present?
       maps_attributes = [{
           map_lat: row['緯度'], map_lng: row['経度'],
           map_zoom: 14,
@@ -158,14 +158,14 @@ class Webdb::Entry::Csv < Webdb::Csv
         if entry.id.present? && entry.maps.present?
           map = entry.maps.first
           if map.present?
-            maps_attributes[0][:id] = map.try(:id)
-            maps_attributes[0][:title] = map.try(:title)
-            maps_attributes[0][:map_lat] = map.try(:map_lat)
-            maps_attributes[0][:map_lng] = map.try(:map_lng)
-            maps_attributes[0][:map_zoom] = map.try(:map_zoom)
-            if entry_markers = map.markers
-              marker = entry_markers.first
-              maps_attributes[0]['markers_attributes'][0][:id] = marker.try(:id)
+            maps_attributes[0]['id'] = map.id
+            maps_attributes[0]['title'] = map.title
+            maps_attributes[0]['map_lat'] = map.map_lat
+            maps_attributes[0]['map_lng'] = map.map_lng
+            maps_attributes[0]['map_zoom'] = map.map_zoom
+            marker = map.markers.first
+            if marker.present?
+              maps_attributes[0]['markers_attributes'][0]['id'] = marker.id
             end
           end
         end
